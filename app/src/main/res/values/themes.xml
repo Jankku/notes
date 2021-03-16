@@ -1,0 +1,30 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.Notes" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="android:statusBarColor">?attr/colorPrimarySurface</item>
+        <item name="android:colorBackground">?attr/colorSurface</item>
+    </style>
+
+    <style name="Theme.Notes" parent="Base.Theme.Notes">
+        <item name="colorPrimary">@color/green_500</item>
+        <item name="colorPrimaryVariant">@color/green_300</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorSecondary">@color/green_500</item>
+        <item name="colorSecondaryVariant">@color/green_300</item>
+        <item name="colorOnSecondary">@color/white</item>
+    </style>
+
+    <style name="Notes.TextAppearance.AppCompat.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Notes.TextAppearance.MaterialComponents.Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="Notes.Widget.MaterialComponents.FloatingActionButton"
+        parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:layout_margin">16dp</item>
+    </style>
+</resources>

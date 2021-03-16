@@ -1,0 +1,25 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/ui_header">
+
+        <ListPreference
+            app:key="@string/view_mode_header"
+            app:title="@string/view_mode_header"
+            app:defaultValue="@string/view_mode_list"
+            app:entries="@array/view_mode_entries"
+            app:entryValues="@array/view_mode_values"
+            app:summary="@string/view_mode_description"/>
+
+       <ListPreference
+           app:key="@string/theme_header"
+           app:title="@string/theme_header"
+           app:defaultValue="@string/theme_system"
+           app:entries="@array/theme_entries"
+           app:entryValues="@array/theme_values"
+           app:summary="@string/theme_description"
+           android:dialogTitle="@string/theme_header"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

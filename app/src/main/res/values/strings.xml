@@ -1,0 +1,37 @@
+<resources>
+
+    <!-- General -->
+    <string name="app_name">Notes</string>
+    <string name="fab_desc">Floating Action Button</string>
+
+    <!-- Home fragment -->
+    <string name="no_notes">No Notes Found</string>
+    <string name="fab_add">Add Note</string>
+
+    <!-- App bar -->
+    <string name="menu_selection_delete">Delete</string>
+    <string name="menu_selection_select_all">Select All</string>
+    <string name="menu_main_settings">Settings</string>
+
+    <!-- Add note fragment -->
+    <string name="noteTitle">Title</string>
+    <string name="noteBody">Text</string>
+    <string name="createdOn">Created %1$s</string>
+    <string name="editedOn">Edited %1$s</string>
+    <string name="empty_note">Title and body text can\'t be empty.</string>
+    <string name="fab_save">Save Note</string>
+
+    <!-- UI Preferences -->
+    <string name="ui_header">UI</string>
+
+    <string name="theme_header">Theme</string>
+    <string name="theme_description">System, Light, Dark</string>
+    <string name="theme_system">system</string>
+    <string name="theme_light">light</string>
+    <string name="theme_dark">dark</string>
+
+    <string name="view_mode_header">View Mode</string>
+    <string name="view_mode_description">List, Grid</string>
+    <string name="view_mode_list">list</string>
+    <string name="view_mode_grid">grid</string>
+</resources>

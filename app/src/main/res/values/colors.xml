@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <color name="green_50">#e5f5ec</color>
+    <color name="green_100">#c1e5d1</color>
+    <color name="green_200">#99d4b4</color>
+    <color name="green_300">#6ec597</color>
+    <color name="green_400">#4cb882</color>
+    <color name="green_500">#23ac6c</color>
+    <color name="green_600">#1c9d62</color>
+    <color name="green_700">#138b55</color>
+    <color name="green_800">#0e7a4a</color>
+    <color name="green_900">#075a35</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="grey_500">#757575</color>
+    <color name="grey_600">#434343</color>
+    <color name="grey_700">#262626</color>
+    <color name="grey_800">#202020</color>
+</resources>
