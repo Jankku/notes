@@ -65,11 +65,11 @@
         android:gravity="top|start"
         android:hint="@string/noteBody"
         android:inputType="textMultiLine|textNoSuggestions"
+        android:importantForAutofill="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilNoteTitle"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toBottomOf="@+id/tilNoteTitle" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabSave"

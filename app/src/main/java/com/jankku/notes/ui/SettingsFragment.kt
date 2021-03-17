@@ -3,15 +3,18 @@ package com.jankku.notes.ui
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate.*
+import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.jankku.notes.R
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
+    private var themePref: Preference? = null
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-        val themePref = findPreference<Preference>(getString(R.string.theme_header))
+        themePref = findPreference(getString(R.string.theme_header))
         themePref?.onPreferenceChangeListener = themeListener
     }
 
@@ -29,6 +32,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+        }
+
+    private val themeIconListener =
+        Preference.OnPreferenceChangeListener { _, newValue ->
+            val isChecked = newValue as? Boolean ?: false
+            if (isChecked) {
+                themePref?.icon =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_dark_mode)
+            } else {
+                themePref?.icon =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_light_mode)
+            }
+            true
         }
 
     private fun updateTheme(nightMode: Int): Boolean {

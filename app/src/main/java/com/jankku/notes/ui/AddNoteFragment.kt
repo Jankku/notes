@@ -1,17 +1,13 @@
 package com.jankku.notes.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.GONE
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -39,6 +35,32 @@ class AddNoteFragment : Fragment() {
 
     private val noteViewModel: NoteViewModel by viewModels {
         NoteViewModelFactory((application as NotesApplication).repository)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        if (args.noteId != "-1") {
+            inflater.inflate(R.menu.menu_selection, menu)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_delete -> {
+                val etNoteBody = binding.etNoteBody
+
+                noteViewModel.delete(args.noteId.toLong())
+                findNavController().navigateUp()
+                etNoteBody.hideKeyboard()
+
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -71,6 +93,10 @@ class AddNoteFragment : Fragment() {
         etNoteTitle.setText(noteTitle, TextView.BufferType.EDITABLE)
         etNoteBody.setText(noteBody, TextView.BufferType.EDITABLE)
 
+        // Show keyboard and set selection to the end of text
+        etNoteBody.showKeyboard()
+        etNoteBody.setSelection(etNoteBody.length())
+
         when (createdOn) {
             "" -> tvCreatedOn.visibility = GONE
             else -> {
@@ -92,7 +118,6 @@ class AddNoteFragment : Fragment() {
             }
         }
 
-
         val fab = binding.fabSave
         fab.setOnClickListener {
             val id = noteId.toLong()
@@ -100,30 +125,33 @@ class AddNoteFragment : Fragment() {
             val body = etNoteBody.text.toString()
             val timeInMs = Calendar.getInstance().timeInMillis
 
-            if (title.isEmpty() || body.isEmpty()) {
-                Toast.makeText(application, R.string.empty_note, Toast.LENGTH_SHORT).show()
-            } else {
-                when (noteId) {
-                    "-1" -> { // If note doesn't exist
-                        activity?.hideSoftKeyboard()
-                        noteViewModel.insert(Note(0, title, body, timeInMs, null))
-                        findNavController().navigate(R.id.action_addNoteFragment_to_homeFragment)
-                    }
-                    else -> { // Update existing note
-                        activity?.hideSoftKeyboard()
-                        noteViewModel.partialUpdate(id, title, body, timeInMs)
-                        findNavController().navigate(R.id.action_addNoteFragment_to_homeFragment)
-                    }
+            when (noteId) {
+                "-1" -> { // If note doesn't exist
+                    etNoteBody.hideKeyboard()
+                    noteViewModel.insert(Note(0, title, body, timeInMs, null))
+                    findNavController().navigateUp()
+                }
+                else -> { // Update existing note
+                    etNoteBody.hideKeyboard()
+                    noteViewModel.partialUpdate(id, title, body, timeInMs)
+                    findNavController().navigateUp()
                 }
             }
         }
     }
 
-    private fun Activity.hideSoftKeyboard() {
-        currentFocus?.let {
-            val inputMethodManager =
-                ContextCompat.getSystemService(this, InputMethodManager::class.java)!!
-            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
+    private fun EditText.showKeyboard() {
+        post {
+            if (this.requestFocus()) {
+                val imm =
+                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+            }
         }
+    }
+
+    private fun EditText.hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(this.windowToken, 0)
     }
 }

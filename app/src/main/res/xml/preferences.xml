@@ -10,16 +10,18 @@
             app:defaultValue="@string/view_mode_list"
             app:entries="@array/view_mode_entries"
             app:entryValues="@array/view_mode_values"
-            app:summary="@string/view_mode_description"/>
+            app:summary="@string/view_mode_description"
+            android:icon="@drawable/ic_grid_view" />
 
-       <ListPreference
-           app:key="@string/theme_header"
-           app:title="@string/theme_header"
-           app:defaultValue="@string/theme_system"
-           app:entries="@array/theme_entries"
-           app:entryValues="@array/theme_values"
-           app:summary="@string/theme_description"
-           android:dialogTitle="@string/theme_header"/>
+        <ListPreference
+            app:key="@string/theme_header"
+            app:title="@string/theme_header"
+            app:defaultValue="@string/theme_system"
+            app:entries="@array/theme_entries"
+            app:entryValues="@array/theme_values"
+            app:summary="@string/theme_description"
+            android:dialogTitle="@string/theme_header"
+            android:icon="@drawable/ic_light_mode" />
     </PreferenceCategory>
 
 </PreferenceScreen>
