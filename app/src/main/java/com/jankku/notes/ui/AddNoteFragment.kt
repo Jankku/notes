@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.addCallback
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -29,6 +30,7 @@ class AddNoteFragment : Fragment() {
     private val binding get() = _binding!!
     private var application: Context? = null
     private val args: AddNoteFragmentArgs by navArgs()
+    private var noteEdited: Boolean = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -74,6 +76,14 @@ class AddNoteFragment : Fragment() {
         etNoteTitle.setText(noteTitle, TextView.BufferType.EDITABLE)
         etNoteBody.setText(noteBody, TextView.BufferType.EDITABLE)
 
+        etNoteTitle.addTextChangedListener {
+            noteEdited = true
+        }
+
+        etNoteBody.addTextChangedListener {
+            noteEdited = true
+        }
+
         val keyboardPref = PreferenceManager
             .getDefaultSharedPreferences(application)
             .getBoolean(getString(R.string.hide_keyboard_key), false)
@@ -112,19 +122,19 @@ class AddNoteFragment : Fragment() {
             val body = etNoteBody.text.toString()
             val timeInMs = Calendar.getInstance().timeInMillis
 
-            if (title.isEmpty() && body.isEmpty()) {
-                findNavController().navigateUp()
-            } else {
-                saveOrUpdateNote(noteId, title, body, timeInMs)
-                findNavController().navigateUp()
-            }
+            saveOrUpdateNote(noteId, title, body, timeInMs)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         // If note exists, inflate menu
         if (args.noteId != "-1") {
-            inflater.inflate(R.menu.menu_selection, menu)
+            inflater.inflate(R.menu.menu_note, menu)
         }
     }
 
@@ -134,11 +144,9 @@ class AddNoteFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_delete -> {
                 etNoteBody.hideKeyboard()
-
                 Thread {
                     noteViewModel.delete(args.noteId.toLong())
                 }.start()
-
                 findNavController().navigateUp()
                 true
             }
@@ -149,13 +157,7 @@ class AddNoteFragment : Fragment() {
                 val timeInMs = Calendar.getInstance().timeInMillis
 
                 etNoteBody.hideKeyboard()
-
-                if (title.isEmpty() && body.isEmpty()) {
-                    findNavController().navigateUp()
-                } else {
-                    saveOrUpdateNote(id, title, body, timeInMs)
-                    findNavController().navigateUp()
-                }
+                saveOrUpdateNote(id, title, body, timeInMs)
                 true
             }
             else -> {
@@ -171,6 +173,16 @@ class AddNoteFragment : Fragment() {
         body: String,
         timeInMs: Long
     ) {
+        if (title.isEmpty() && body.isEmpty()) {
+            findNavController().navigateUp()
+            return
+        }
+
+        if (!noteEdited) {
+            findNavController().navigateUp()
+            return
+        }
+
         Thread {
             val id = noteId.toLong()
             when (noteId) {
@@ -178,6 +190,7 @@ class AddNoteFragment : Fragment() {
                 else -> noteViewModel.update(id, title, body, timeInMs)
             }
         }.start()
+        findNavController().navigateUp()
     }
 
     private fun EditText.showKeyboard() {

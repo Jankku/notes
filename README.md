@@ -1,6 +1,6 @@
 # Notes
 
-Simple notes application made in Kotlin.
+Simple note taking Android app made in Kotlin.
 
 ## Screenshots
 
@@ -8,10 +8,10 @@ TODO
 
 ## Features
 
--   Free forever
+-   Free
 -   Open source
 -   Light/dark theme
--   Backup/restore notes
+-   Export/import notes
 -   No permissions
 -   No ads
 -   No trackers
