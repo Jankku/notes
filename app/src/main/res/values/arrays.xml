@@ -17,7 +17,7 @@
     </string-array>
 
     <string-array name="view_mode_values">
-        <item>list</item>
-        <item>grid</item>
+        <item>@string/view_mode_list</item>
+        <item>@string/view_mode_grid</item>
     </string-array>
 </resources>

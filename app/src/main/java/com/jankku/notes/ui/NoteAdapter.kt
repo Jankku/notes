@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jankku.notes.R
 import com.jankku.notes.db.Note
 
+
 class NoteAdapter internal constructor(
     private val clickListener: (Note) -> Unit
 ) : ListAdapter<Note, NoteAdapter.NoteViewHolder>(NOTES_COMPARATOR) {
@@ -31,34 +32,7 @@ class NoteAdapter internal constructor(
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener, selectionTracker)
-    }
-
-    override fun getItemId(position: Int): Long = position.toLong()
-    override fun getItemViewType(position: Int): Int = position
-
-    class KeyProvider(private val adapter: NoteAdapter) :
-        ItemKeyProvider<Long>(SCOPE_MAPPED) {
-
-        override fun getKey(position: Int): Long {
-            return adapter.currentList[position].id
-        }
-
-        override fun getPosition(key: Long): Int {
-            return adapter.currentList.indexOfFirst { it.id == key }
-        }
-
-    }
-
-    class DetailsLookup(private val recyclerView: RecyclerView) : ItemDetailsLookup<Long>() {
-
-        override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? {
-            val view = recyclerView.findChildViewUnder(event.x, event.y)
-            if (view != null) {
-                return (recyclerView.getChildViewHolder(view) as NoteViewHolder).getItemDetails()
-            }
-            return null
-        }
+        holder.bind(getItem(position))
     }
 
     inner class NoteViewHolder(itemView: View) :
@@ -70,8 +44,6 @@ class NoteAdapter internal constructor(
 
         fun bind(
             note: Note,
-            clickListener: (Note) -> Unit,
-            selectionTracker: SelectionTracker<Long>
         ) = with(itemView) {
             noteTitle.text = note.title
             noteBody.text = note.body
@@ -96,6 +68,31 @@ class NoteAdapter internal constructor(
             }
     }
 
+    class KeyProvider(private val adapter: NoteAdapter) :
+        ItemKeyProvider<Long>(SCOPE_MAPPED) {
+
+        override fun getKey(position: Int): Long {
+            return adapter.currentList[position].id
+        }
+
+        override fun getPosition(key: Long): Int {
+            return adapter.currentList.indexOfFirst { it.id == key }
+        }
+
+    }
+
+    class DetailsLookup(private val recyclerView: RecyclerView) : ItemDetailsLookup<Long>() {
+        override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? {
+            val view = recyclerView.findChildViewUnder(event.x, event.y)
+            if (view != null) {
+                return (recyclerView.getChildViewHolder(view) as NoteViewHolder).getItemDetails()
+            }
+            return null
+        }
+    }
+
+    override fun getItemId(position: Int): Long = position.toLong()
+    override fun getItemViewType(position: Int): Int = position
 
     companion object {
         private val NOTES_COMPARATOR = object : DiffUtil.ItemCallback<Note>() {

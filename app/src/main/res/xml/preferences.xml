@@ -5,23 +5,63 @@
     <PreferenceCategory app:title="@string/ui_header">
 
         <ListPreference
-            app:key="@string/view_mode_header"
-            app:title="@string/view_mode_header"
+            app:key="@string/view_mode_key"
+            app:summary="@string/view_mode_description"
+            app:title="@string/view_mode_title"
+            android:icon="@drawable/ic_grid_view"
             app:defaultValue="@string/view_mode_list"
             app:entries="@array/view_mode_entries"
-            app:entryValues="@array/view_mode_values"
-            app:summary="@string/view_mode_description"
-            android:icon="@drawable/ic_grid_view" />
+            app:entryValues="@array/view_mode_values" />
 
         <ListPreference
-            app:key="@string/theme_header"
-            app:title="@string/theme_header"
+            app:key="@string/theme_key"
+            app:summary="@string/theme_description"
+            app:title="@string/theme_title"
+            android:dialogTitle="@string/theme_title"
+            android:icon="@drawable/ic_light_mode"
             app:defaultValue="@string/theme_system"
             app:entries="@array/theme_entries"
-            app:entryValues="@array/theme_values"
-            app:summary="@string/theme_description"
-            android:dialogTitle="@string/theme_header"
-            android:icon="@drawable/ic_light_mode" />
+            app:entryValues="@array/theme_values" />
+
+        <SwitchPreferenceCompat
+            app:key="@string/hide_keyboard_key"
+            app:title="@string/hide_keyboard_title"
+            app:summary="@string/hide_keyboard_summary"
+            app:defaultValue="false"
+            android:icon="@drawable/ic_keyboard_hide"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/export_import_header">
+        <Preference
+            app:key="@string/export_database_key"
+            app:title="@string/export_database_title"
+            app:summary="@string/export_database_summary"
+            android:icon="@drawable/ic_save"/>
+
+        <Preference
+            app:key="@string/import_database_key"
+            app:title="@string/import_database_title"
+            app:summary="@string/import_database_summary"
+            android:icon="@drawable/ic_upload_file"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/about_header">
+        <Preference
+            app:key="@string/app_key"
+            app:title="@string/app_name"
+            app:icon="@drawable/ic_android"/>
+
+        <Preference
+            app:key="@string/author_key"
+            app:title="@string/author_title"
+            app:summary="@string/author_summary"
+            app:icon="@drawable/ic_person"/>
+
+        <Preference
+            app:key="@string/github_key"
+            app:title="@string/github_title"
+            app:summary="@string/github_summary"
+            app:icon="@drawable/ic_github"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

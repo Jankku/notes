@@ -13,13 +13,8 @@ class NoteRepository(private val noteDao: NoteDao) {
     }
 
     @WorkerThread
-    suspend fun update(note: Note) {
-        noteDao.update(note)
-    }
-
-    @WorkerThread
-    suspend fun partialUpdate(id: Long, title: String, body: String, editedOn: Long) {
-        noteDao.partialUpdate(id, title, body, editedOn)
+    suspend fun update(id: Long, title: String, body: String, editedOn: Long) {
+        noteDao.update(id, title, body, editedOn)
     }
 
     @WorkerThread

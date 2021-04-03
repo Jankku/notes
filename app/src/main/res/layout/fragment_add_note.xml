@@ -1,85 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.AddNoteFragment">
 
-    <TextView
-        android:id="@+id/tvCreatedOn"
+    <ScrollView
+        android:id="@+id/svAddNote"
         android:layout_width="match_parent"
-        android:layout_height="26dp"
+        android:layout_height="match_parent"
         android:background="?attr/colorSurface"
+        android:overScrollMode="never"
         android:scrollbars="none"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="4dp"
-        app:layout_constraintBottom_toTopOf="@id/tvEditedOn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvEditedOn"
-        android:layout_width="match_parent"
-        android:layout_height="26dp"
-        android:background="?attr/colorSurface"
-        android:scrollbars="none"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@id/tilNoteTitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvCreatedOn" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilNoteTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/etNoteBody"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvEditedOn">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etNoteTitle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            style="@style/TextAppearance.MaterialComponents.Body1"
-            android:background="?attr/colorSurface"
-            android:hint="@string/noteTitle"
-            android:inputType="textMultiLine|textNoSuggestions"
-            android:overScrollMode="always"
-            android:scrollbars="none" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <EditText
-        android:id="@+id/etNoteBody"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="12dp"
-        style="@style/TextAppearance.MaterialComponents.Body1"
-        android:background="?attr/colorSurface"
-        android:gravity="top|start"
-        android:hint="@string/noteBody"
-        android:inputType="textMultiLine|textNoSuggestions"
-        android:importantForAutofill="no"
+        android:fillViewport="false"
+        android:isScrollContainer="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilNoteTitle" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabSave"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_save"
-        style="@style/Notes.Widget.MaterialComponents.FloatingActionButton"
-        android:contentDescription="@string/fab_desc"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:context=".ui.AddNoteFragment">
+
+                <TextView
+                    android:id="@+id/tvCreatedOn"
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:background="?attr/colorSurface"
+                    android:paddingHorizontal="16dp"
+                    android:paddingTop="4dp"
+                    android:scrollbars="none"
+                    app:layout_constraintBottom_toTopOf="@id/tvEditedOn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvEditedOn"
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:background="?attr/colorSurface"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="8dp"
+                    android:scrollbars="none"
+                    app:layout_constraintBottom_toTopOf="@id/etNoteTitle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvCreatedOn" />
+
+                <EditText
+                    android:id="@+id/etNoteTitle"
+                    style="@style/Notes.TextAppearance.AppCompat.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/colorSurface"
+                    android:paddingHorizontal="16dp"
+                    android:paddingTop="12dp"
+                    android:gravity="top|start"
+                    android:hint="@string/noteTitle"
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine|textCapSentences|textAutoComplete"
+                    android:scrollbars="none"
+                    app:layout_constraintBottom_toTopOf="@id/etNoteBody"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvEditedOn" />
+
+                <EditText
+                    android:id="@+id/etNoteBody"
+                    style="@style/Notes.TextAppearance.MaterialComponents.Body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="32dp"
+                    android:background="?attr/colorSurface"
+                    android:gravity="top|start"
+                    android:hint="@string/noteBody"
+                    android:isScrollContainer="true"
+                    android:importantForAutofill="no"
+                    android:scrollbars="none"
+                    android:inputType="textMultiLine|textCapSentences|textAutoComplete"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/etNoteTitle" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

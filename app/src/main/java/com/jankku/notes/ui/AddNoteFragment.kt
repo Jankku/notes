@@ -8,10 +8,12 @@ import android.view.View.GONE
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.preference.PreferenceManager
 import com.jankku.notes.NotesApplication
 import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentAddNoteBinding
@@ -35,27 +37,6 @@ class AddNoteFragment : Fragment() {
 
     private val noteViewModel: NoteViewModel by viewModels {
         NoteViewModelFactory((application as NotesApplication).repository)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (args.noteId != "-1") {
-            inflater.inflate(R.menu.menu_selection, menu)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_delete -> {
-                val etNoteBody = binding.etNoteBody
-
-                noteViewModel.delete(args.noteId.toLong())
-                findNavController().navigateUp()
-                etNoteBody.hideKeyboard()
-
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,9 +74,15 @@ class AddNoteFragment : Fragment() {
         etNoteTitle.setText(noteTitle, TextView.BufferType.EDITABLE)
         etNoteBody.setText(noteBody, TextView.BufferType.EDITABLE)
 
-        // Show keyboard and set selection to the end of text
-        etNoteBody.showKeyboard()
-        etNoteBody.setSelection(etNoteBody.length())
+        val keyboardPref = PreferenceManager
+            .getDefaultSharedPreferences(application)
+            .getBoolean(getString(R.string.hide_keyboard_key), false)
+
+        // Show keyboard if hide keyboard setting is false
+        if (!keyboardPref) {
+            etNoteBody.showKeyboard()
+            etNoteBody.setSelection(etNoteBody.length())
+        }
 
         when (createdOn) {
             "" -> tvCreatedOn.visibility = GONE
@@ -118,26 +105,79 @@ class AddNoteFragment : Fragment() {
             }
         }
 
-        val fab = binding.fabSave
-        fab.setOnClickListener {
-            val id = noteId.toLong()
+        // Save/update note on back press if the note isn't empty
+        // https://developer.android.com/guide/navigation/navigation-custom-back
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             val title = etNoteTitle.text.toString()
             val body = etNoteBody.text.toString()
             val timeInMs = Calendar.getInstance().timeInMillis
 
-            when (noteId) {
-                "-1" -> { // If note doesn't exist
-                    etNoteBody.hideKeyboard()
-                    noteViewModel.insert(Note(0, title, body, timeInMs, null))
-                    findNavController().navigateUp()
-                }
-                else -> { // Update existing note
-                    etNoteBody.hideKeyboard()
-                    noteViewModel.partialUpdate(id, title, body, timeInMs)
-                    findNavController().navigateUp()
-                }
+            if (title.isEmpty() && body.isEmpty()) {
+                findNavController().navigateUp()
+            } else {
+                saveOrUpdateNote(noteId, title, body, timeInMs)
+                findNavController().navigateUp()
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        // If note exists, inflate menu
+        if (args.noteId != "-1") {
+            inflater.inflate(R.menu.menu_selection, menu)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val etNoteBody = binding.etNoteBody
+
+        return when (item.itemId) {
+            R.id.action_delete -> {
+                etNoteBody.hideKeyboard()
+
+                Thread {
+                    noteViewModel.delete(args.noteId.toLong())
+                }.start()
+
+                findNavController().navigateUp()
+                true
+            }
+            android.R.id.home -> {
+                val id = args.noteId
+                val title = binding.etNoteTitle.text.toString()
+                val body = binding.etNoteBody.text.toString()
+                val timeInMs = Calendar.getInstance().timeInMillis
+
+                etNoteBody.hideKeyboard()
+
+                if (title.isEmpty() && body.isEmpty()) {
+                    findNavController().navigateUp()
+                } else {
+                    saveOrUpdateNote(id, title, body, timeInMs)
+                    findNavController().navigateUp()
+                }
+                true
+            }
+            else -> {
+                etNoteBody.hideKeyboard()
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
+    private fun saveOrUpdateNote(
+        noteId: String,
+        title: String,
+        body: String,
+        timeInMs: Long
+    ) {
+        Thread {
+            val id = noteId.toLong()
+            when (noteId) {
+                "-1" -> noteViewModel.insert(Note(0, title, body, timeInMs, null))
+                else -> noteViewModel.update(id, title, body, timeInMs)
+            }
+        }.start()
     }
 
     private fun EditText.showKeyboard() {

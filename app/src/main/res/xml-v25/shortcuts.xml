@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_add"
+        android:shortcutDisabledMessage="@string/add_note"
+        android:shortcutId="add_note"
+        android:shortcutLongLabel="@string/add_note"
+        android:shortcutShortLabel="@string/add_note">
+
+        <intent
+            android:action="com.jankku.notes.addNote"
+            android:targetClass="com.jankku.notes.ui.MainActivity"
+            android:targetPackage="com.jankku.notes" />
+
+    </shortcut>
+</shortcuts>

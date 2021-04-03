@@ -6,11 +6,10 @@
 
     <!-- Home fragment -->
     <string name="no_notes">No Notes Found</string>
-    <string name="fab_add">Add Note</string>
+    <string name="fab_add_title">Create</string>
 
     <!-- App bar -->
     <string name="menu_selection_delete">Delete</string>
-    <string name="menu_selection_select_all">Select All</string>
     <string name="menu_main_settings">Settings</string>
 
     <!-- Add note fragment -->
@@ -18,20 +17,54 @@
     <string name="noteBody">Text</string>
     <string name="createdOn">Created %1$s</string>
     <string name="editedOn">Edited %1$s</string>
-    <string name="empty_note">Title and body text can\'t be empty.</string>
-    <string name="fab_save">Save Note</string>
 
-    <!-- UI Preferences -->
+    <!-- Preferences -->
     <string name="ui_header">UI</string>
+    <string name="export_import_header">Export &amp; Import</string>
+    <string name="about_header">About</string>
 
-    <string name="theme_header">Theme</string>
+    <!-- View Mode -->
+    <string name="view_mode_key">view_mode</string>
+    <string name="view_mode_title">View mode</string>
+    <string name="view_mode_description">List, Grid</string>
+    <string name="view_mode_list">list</string>
+    <string name="view_mode_grid">grid</string>
+
+    <!-- Theme -->
+    <string name="theme_key">theme</string>
+    <string name="theme_title">Theme</string>
     <string name="theme_description">System, Light, Dark</string>
     <string name="theme_system">system</string>
     <string name="theme_light">light</string>
     <string name="theme_dark">dark</string>
 
-    <string name="view_mode_header">View Mode</string>
-    <string name="view_mode_description">List, Grid</string>
-    <string name="view_mode_list">list</string>
-    <string name="view_mode_grid">grid</string>
+    <!-- Hide keyboard -->
+    <string name="hide_keyboard_key">hide_keyboard</string>
+    <string name="hide_keyboard_title">Hide keyboard</string>
+    <string name="hide_keyboard_summary">Do not automatically show the keyboard</string>
+
+    <!-- Export database -->
+    <string name="export_database_key">export_database</string>
+    <string name="export_database_title">Export</string>
+    <string name="export_database_summary">Notes to a file</string>
+    <string name="export_database_successful">Notes exported. Restart app to apply changes</string>
+
+    <!-- Import database -->
+    <string name="import_database_key">import_database</string>
+    <string name="import_database_title">Import</string>
+    <string name="import_database_summary">Notes from a file</string>
+    <string name="import_database_successful">Database imported. Restart app to apply changes</string>
+
+    <!-- About -->
+    <string name="app_key">app</string>
+    <string name="author_key">author</string>
+    <string name="author_title">Author</string>
+    <string name="author_summary">Jankku</string>
+    <string name="github_key">github</string>
+    <string name="github_title">GitHub</string>
+    <string name="github_summary">https://github.com/jankku/notes</string>
+
+
+    <!-- Shortcuts -->
+    <string name="add_note">Add note</string>
 </resources>

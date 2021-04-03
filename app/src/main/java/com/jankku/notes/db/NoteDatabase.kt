@@ -14,20 +14,29 @@ abstract class NoteDatabase : RoomDatabase() {
         // same time.
         @Volatile
         private var INSTANCE: NoteDatabase? = null
+        const val DATABASE_NAME: String = "note_database"
 
         fun getDatabase(
-            context: Context): NoteDatabase {
+            context: Context
+        ): NoteDatabase {
             // if the INSTANCE is not null, then return it,
             // if it is, then create the database
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     NoteDatabase::class.java,
-                    "note_database"
-                ).fallbackToDestructiveMigration().build()
+                    DATABASE_NAME
+                ).build()
                 INSTANCE = instance
                 // return instance
                 instance
+            }
+        }
+
+        fun destroyInstance() {
+            if (INSTANCE?.isOpen == true) {
+                INSTANCE?.close()
+                INSTANCE = null
             }
         }
     }

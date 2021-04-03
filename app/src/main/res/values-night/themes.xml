@@ -1,5 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.Notes" parent="Base.Theme.Notes">
+        <item name="android:colorBackground">@color/grey_800</item>
+        <item name="android:navigationBarColor">@color/grey_800</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+
         <item name="colorPrimary">@color/green_200</item>
         <item name="colorPrimaryVariant">@color/green_300</item>
         <item name="colorOnPrimary">@color/black</item>
@@ -10,22 +15,24 @@
 
         <item name="colorSurface">@color/grey_700</item>
         <item name="colorPrimarySurface">@color/grey_700</item>
-
-        <item name="android:colorBackground">@color/grey_800</item>
-        <item name="android:navigationBarColor">@color/grey_800</item>
     </style>
 
     <style name="Notes.TextAppearance.AppCompat.Title" parent="TextAppearance.AppCompat.Title">
         <item name="android:textColor">@color/white_87</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Notes.TextAppearance.MaterialComponents.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">@color/white_87</item>
     </style>
 
-    <style name="Notes.Widget.MaterialComponents.FloatingActionButton"
-        parent="Widget.MaterialComponents.FloatingActionButton">
+    <style name="Notes.TextAppearance.MaterialComponents.Body2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@color/white_87</item>
+    </style>
+
+    <style name="Notes.Widget.MaterialComponents.ExtendedFloatingActionButton"
+        parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
         <item name="android:layout_margin">16dp</item>
+        <item name="android:scrollbars">none</item>
     </style>
 </resources>

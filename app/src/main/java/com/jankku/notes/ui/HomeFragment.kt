@@ -27,30 +27,16 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
-    private var application: Context? = null
+    private lateinit var application: Context
     private lateinit var selectionTracker: SelectionTracker<Long>
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        application = activity?.applicationContext
+        application = requireActivity().applicationContext
     }
 
     private val noteViewModel: NoteViewModel by viewModels {
         NoteViewModelFactory((application as NotesApplication).repository)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_main, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> {
-                findNavController().navigate(R.id.action_homeFragment_to_settingsFragment)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +73,7 @@ class HomeFragment : Fragment() {
 
         val viewModePreference = PreferenceManager
             .getDefaultSharedPreferences(application)
-            .getString(getString(R.string.view_mode_header), null)
+            .getString(getString(R.string.view_mode_key), null)
 
         if (viewModePreference == "list") {
             recyclerView.layoutManager = object : LinearLayoutManager(application) {
@@ -98,24 +84,29 @@ class HomeFragment : Fragment() {
         }
 
         recyclerView.adapter = adapter
+        recyclerView.setHasFixedSize(true)
+        recyclerView.setItemViewCacheSize(20)
 
-        val fab = binding.fabAdd
-        fab.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_addNoteFragment)
-        }
 
-        val tvNoNotes = binding.noNotes.tvNoNotes
-        val ivNoNotes = binding.noNotes.ivNoNotes
+        // Shrink FAB on scroll
+        // https://stackoverflow.com/questions/32038332/using-google-design-library-how-to-hide-fab-button-on-scroll-down
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 10)
+                    binding.fabAdd.shrink()
+                else if (dy < 0)
+                    binding.fabAdd.extend()
+            }
+        })
 
         noteViewModel.allNotes.observe(viewLifecycleOwner) { list ->
             list.let { adapter.submitList(it) }
 
-            if (list.isNotEmpty()) {
-                tvNoNotes.visibility = GONE
-                ivNoNotes.visibility = GONE
+            // Show the "No Notes" layout if the list is empty, otherwise keep it hidden
+            if (list.isEmpty()) {
+                binding.noNotes.clNoNotes.visibility = VISIBLE
             } else {
-                tvNoNotes.visibility = VISIBLE
-                ivNoNotes.visibility = VISIBLE
+                binding.noNotes.clNoNotes.visibility = GONE
             }
         }
 
@@ -136,6 +127,7 @@ class HomeFragment : Fragment() {
             override fun onSelectionChanged() {
                 val actionModeCallback = ActionModeCallback()
                 val selectedItems = selectionTracker.selection
+
                 actionModeCallback.startActionMode(
                     view,
                     application,
@@ -148,65 +140,28 @@ class HomeFragment : Fragment() {
 
             override fun onItemStateChanged(key: Long, selected: Boolean) {
                 super.onItemStateChanged(key, selected)
-                if (!selectionTracker.hasSelection()) {
+                if (selectionTracker.selection.size() == 0) {
                     selectionTracker.clearSelection()
                 }
             }
         })
+
+        binding.fabAdd.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_addNoteFragment)
+        }
     }
 
-    class ActionModeCallback : ActionMode.Callback {
-        private var mode: ActionMode? = null
-        private var title: String? = null
-        private var selectionTracker: SelectionTracker<Long>? = null
-        private var noteViewModel: NoteViewModel? = null
-        private var adapter: NoteAdapter? = null
-        private var context: Context? = null
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+    }
 
-        override fun onCreateActionMode(mode: ActionMode, menu: Menu?): Boolean {
-            this.mode = mode
-            mode.menuInflater?.inflate(R.menu.menu_selection, menu)
-            mode.title = title
-            return true
-        }
-
-        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            return true
-        }
-
-        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            val noteIdList = selectionTracker!!.selection.toList()
-
-            when (item?.itemId) {
-                R.id.action_delete -> {
-                    for (id in noteIdList) {
-                        noteViewModel?.delete(id)
-                    }
-                    mode?.finish()
-                }
-                else -> mode?.finish()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                findNavController().navigate(R.id.action_homeFragment_to_settingsFragment)
+                true
             }
-            return true
-        }
-
-        override fun onDestroyActionMode(mode: ActionMode?) {
-            this.mode = null
-        }
-
-        fun startActionMode(
-            view: View,
-            context: Context?,
-            selectionTracker: SelectionTracker<Long>,
-            noteViewModel: NoteViewModel,
-            adapter: NoteAdapter,
-            title: String? = null
-        ) {
-            this.title = title
-            this.selectionTracker = selectionTracker
-            this.noteViewModel = noteViewModel
-            this.adapter = adapter
-            this.context = context
-            view.startActionMode(this)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

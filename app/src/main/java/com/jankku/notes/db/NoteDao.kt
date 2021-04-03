@@ -1,7 +1,11 @@
 package com.jankku.notes.db
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface NoteDao {
@@ -11,11 +15,8 @@ interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(note: Note)
 
-    @Update(onConflict = OnConflictStrategy.REPLACE, entity = Note::class)
-    suspend fun update(note: Note)
-
     @Query("UPDATE notes SET title=:title, body=:body, editedOn=:editedOn WHERE id=:id")
-    suspend fun partialUpdate(id: Long, title: String, body: String, editedOn: Long)
+    suspend fun update(id: Long, title: String, body: String, editedOn: Long)
 
     @Query("DELETE from notes WHERE id=:id")
     suspend fun delete(id: Long)

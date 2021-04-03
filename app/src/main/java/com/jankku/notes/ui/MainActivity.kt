@@ -1,4 +1,4 @@
-package com.jankku.notes
+package com.jankku.notes.ui
 
 import android.os.Build
 import android.os.Bundle
@@ -9,15 +9,17 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.preference.PreferenceManager
+import com.jankku.notes.R
+
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val themePref = PreferenceManager
             .getDefaultSharedPreferences(applicationContext)
-            .getString(getString(R.string.theme_header), null)
+            .getString(getString(R.string.theme_key), null)
 
-        // Set theme on app start
+        // Set theme on activity start
         when (themePref) {
             getString(R.string.theme_light) -> setDefaultNightMode(MODE_NIGHT_NO)
             getString(R.string.theme_dark) -> setDefaultNightMode(MODE_NIGHT_YES)
@@ -35,8 +37,18 @@ class MainActivity : AppCompatActivity() {
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
+
+        // Add note shortcut
+        if ("com.jankku.notes.addNote" == intent.action) {
+            navHostFragment.findNavController()
+                .navigate(HomeFragmentDirections.actionHomeFragmentToAddNoteFragment())
+            intent.action = "android.intent.action.MAIN"
+        }
+
         setupActionBarWithNavController(navHostFragment.findNavController())
+        supportActionBar!!.elevation = 0f
     }
 
-    override fun onSupportNavigateUp(): Boolean = findNavController(R.id.nav_host_fragment).navigateUp()
+    override fun onSupportNavigateUp(): Boolean =
+        findNavController(R.id.nav_host_fragment).navigateUp()
 }
