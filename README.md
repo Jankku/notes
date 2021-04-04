@@ -17,4 +17,4 @@ Simple note taking Android app made in Kotlin.
 
 ## Download
 
-Download the app from the [releases page](https://github.com/Jankku/notes/releases).
+Get the app from [releases page](https://github.com/Jankku/notes/releases).

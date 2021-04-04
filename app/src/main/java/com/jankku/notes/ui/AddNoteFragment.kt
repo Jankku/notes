@@ -190,6 +190,7 @@ class AddNoteFragment : Fragment() {
                 else -> noteViewModel.update(id, title, body, timeInMs)
             }
         }.start()
+
         findNavController().navigateUp()
     }
 

@@ -84,7 +84,6 @@ class NoteAdapter internal constructor(
             override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
                 return oldItem == newItem
             }
-
         }
     }
 }

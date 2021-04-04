@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
             .getDefaultSharedPreferences(applicationContext)
             .getString(getString(R.string.theme_key), null)
 
-        // Set theme on activity start
+        // Set theme
         when (themePref) {
             getString(R.string.theme_light) -> setDefaultNightMode(MODE_NIGHT_NO)
             getString(R.string.theme_dark) -> setDefaultNightMode(MODE_NIGHT_YES)

@@ -2,7 +2,6 @@ package com.jankku.notes.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -90,9 +89,6 @@ class HomeFragment : Fragment() {
             },
             { position -> // Swipe listener
                 val noteId = noteList[position]
-                Log.d("LOG_POSITION", position.toString())
-                Log.d("LOG_LIST", noteList.toString())
-                Log.d("LOG_ITEM_ID", noteId.toString())
 
                 Snackbar.make(
                     recyclerView,
@@ -124,6 +120,7 @@ class HomeFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         recyclerView.setItemViewCacheSize(20)
 
+        // Swipe to delete action
         val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapter))
         itemTouchHelper.attachToRecyclerView(recyclerView)
 

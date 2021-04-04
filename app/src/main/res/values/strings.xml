@@ -62,6 +62,7 @@
     <string name="author_key">author</string>
     <string name="author_title">Author</string>
     <string name="author_summary">Jankku</string>
+
     <string name="github_key">github</string>
     <string name="github_title">GitHub</string>
     <string name="github_summary">https://github.com/jankku/notes</string>
