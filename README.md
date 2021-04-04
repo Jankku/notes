@@ -2,9 +2,7 @@
 
 Simple note taking Android app made in Kotlin.
 
-## Screenshots
-
-TODO
+![Screenshots](screenshots.png)
 
 ## Features
 
@@ -16,3 +14,7 @@ TODO
 -   No ads
 -   No trackers
 -   No bullshit
+
+## Download
+
+Download the app from the [releases page](https://github.com/Jankku/notes/releases).
