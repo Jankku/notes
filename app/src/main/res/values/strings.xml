@@ -7,6 +7,7 @@
     <!-- Home fragment -->
     <string name="no_notes">No Notes Found</string>
     <string name="fab_add_title">Create</string>
+    <string name="snackbar_note_deleted">Note deleted</string>
 
     <!-- App bar -->
     <string name="menu_selection_delete">Delete</string>

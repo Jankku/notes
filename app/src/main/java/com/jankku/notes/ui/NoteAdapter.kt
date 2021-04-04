@@ -15,7 +15,8 @@ import com.jankku.notes.db.Note
 
 
 class NoteAdapter internal constructor(
-    private val clickListener: (Note, Int) -> Unit
+    private val clickListener: (Note) -> Unit,
+    private val swipeListener: (Int) -> Unit
 ) : ListAdapter<Note, NoteAdapter.NoteViewHolder>(NOTES_COMPARATOR) {
 
     lateinit var selectionTracker: SelectionTracker<Long>
@@ -37,6 +38,10 @@ class NoteAdapter internal constructor(
     override fun getItemId(position: Int): Long = position.toLong()
     override fun getItemViewType(position: Int): Int = position
 
+    fun deleteItem(itemPosition: Int) {
+        swipeListener(itemPosition)
+    }
+
     inner class NoteViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
 
@@ -50,7 +55,7 @@ class NoteAdapter internal constructor(
             noteTitle.text = note.title
             noteBody.text = note.body
             noteId = note.id
-            itemView.setOnClickListener { clickListener(note, adapterPosition) }
+            itemView.setOnClickListener { clickListener(note) }
             bindSelectedState(
                 this,
                 selectionTracker.isSelected(getItem(adapterPosition).id)
