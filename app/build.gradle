@@ -13,8 +13,8 @@ android {
         applicationId "com.jankku.notes"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1
-        versionName "0.9"
+        versionCode 3
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,7 +28,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            //applicationIdSuffix ".debug"
+            minifyEnabled false
+            shrinkResources false
+            versionNameSuffix "-debug"
+            applicationIdSuffix ".debug"
             debuggable true
         }
     }
@@ -51,7 +54,7 @@ dependencies {
     implementation 'androidx.activity:activity-ktx:1.2.2'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
