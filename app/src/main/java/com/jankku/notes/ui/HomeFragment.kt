@@ -86,21 +86,22 @@ class HomeFragment : Fragment() {
                     editedOn = note.editedOn.toString()
                 )
                 findNavController().navigate(action)
-            },
-            { position -> // Swipe listener
-                val noteId = noteList[position]
+            }
+        ) { position -> // Swipe listener
+            val noteId = noteList[position]
 
-                Snackbar.make(
-                    recyclerView,
-                    R.string.snackbar_note_deleted,
-                    Snackbar.LENGTH_LONG
-                ).show()
+            Snackbar.make(
+                recyclerView,
+                R.string.snackbar_note_deleted,
+                Snackbar.LENGTH_LONG
+            ).show()
 
-                adapter.notifyItemRemoved(position)
-                adapter.notifyItemRangeChanged(position, noteList.size)
-                noteList.removeAt(position)
-                noteViewModel.delete(noteId)
-            })
+            noteList.removeAt(position)
+            adapter.notifyItemMoved(position + 1, position)
+            adapter.notifyItemRemoved(position)
+            adapter.notifyItemRangeChanged(0, noteList.size)
+            noteViewModel.delete(noteId)
+        }
 
         recyclerView = binding.recyclerview
 
@@ -121,7 +122,7 @@ class HomeFragment : Fragment() {
         recyclerView.setItemViewCacheSize(20)
 
         // Swipe to delete action
-        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapter))
+        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapter, requireContext()))
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         // Shrink FAB on scroll
