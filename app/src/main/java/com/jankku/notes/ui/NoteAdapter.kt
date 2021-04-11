@@ -58,7 +58,7 @@ class NoteAdapter internal constructor(
             itemView.setOnClickListener { clickListener(note) }
             bindSelectedState(
                 this,
-                selectionTracker.isSelected(getItem(adapterPosition).id)
+                selectionTracker.isSelected(getItem(absoluteAdapterPosition).id)
             )
         }
 
@@ -68,8 +68,8 @@ class NoteAdapter internal constructor(
 
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
             object : ItemDetailsLookup.ItemDetails<Long>() {
-                override fun getPosition(): Int = adapterPosition
-                override fun getSelectionKey(): Long = getItem(adapterPosition).id
+                override fun getPosition(): Int = absoluteAdapterPosition
+                override fun getSelectionKey(): Long = getItem(absoluteAdapterPosition).id
                 override fun inSelectionHotspot(e: MotionEvent): Boolean = false
                 override fun inDragRegion(e: MotionEvent): Boolean = true
             }
