@@ -1,23 +1,36 @@
 <resources>
-    <string-array name="theme_entries">
-        <item>System</item>
-        <item>Light</item>
-        <item>Dark</item>
-    </string-array>
 
     <string-array name="theme_values">
-        <item>@string/theme_system</item>
-        <item>@string/theme_light</item>
-        <item>@string/theme_dark</item>
+        <item>@string/theme_value_system</item>
+        <item>@string/theme_value_light</item>
+        <item>@string/theme_value_dark</item>
     </string-array>
 
-    <string-array name="view_mode_entries">
-        <item>List</item>
-        <item>Grid</item>
+    <string-array name="theme_entries">
+        <item>@string/theme_entry_system</item>
+        <item>@string/theme_entry_light</item>
+        <item>@string/theme_entry_dark</item>
+    </string-array>
+
+    <string-array name="language_values">
+        <item>@string/language_value_system</item>
+        <item>@string/language_value_en</item>
+        <item>@string/language_value_fi</item>
+    </string-array>
+
+    <string-array name="language_entries">
+        <item>@string/language_entry_system</item>
+        <item>@string/language_entry_en</item>
+        <item>@string/language_entry_fi</item>
     </string-array>
 
     <string-array name="view_mode_values">
-        <item>@string/view_mode_list</item>
-        <item>@string/view_mode_grid</item>
+        <item>@string/view_mode_value_list</item>
+        <item>@string/view_mode_value_grid</item>
+    </string-array>
+
+    <string-array name="view_mode_entries">
+        <item>@string/view_mode_entry_list</item>
+        <item>@string/view_mode_entry_grid</item>
     </string-array>
 </resources>

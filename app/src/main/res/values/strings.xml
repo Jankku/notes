@@ -1,15 +1,21 @@
 <resources>
 
     <!-- General -->
-    <string name="app_name">Notes</string>
-    <string name="fab_desc">Floating Action Button</string>
+    <string name="app_name" translatable="false">Notes</string>
+    <string name="fab_desc" translatable="false">Floating Action Button</string>
+
+    <!-- General -->
+    <string name="navigation_home_label">Notes</string>
+    <string name="navigation_add_note_label">Note</string>
+    <string name="navigation_settings_label">Settings</string>
 
     <!-- Home fragment -->
-    <string name="no_notes">No Notes Found</string>
+    <string name="no_notes">No notes</string>
     <string name="fab_add_title">Create</string>
     <string name="snackbar_note_deleted">Note deleted</string>
 
     <!-- App bar -->
+    <string name="menu_note_delete">Delete</string>
     <string name="menu_selection_delete">Delete</string>
     <string name="menu_selection_select_all">Select All</string>
     <string name="menu_main_settings">Settings</string>
@@ -26,48 +32,64 @@
     <string name="about_header">About</string>
 
     <!-- View Mode -->
-    <string name="view_mode_key">view_mode</string>
+    <string name="view_mode_key" translatable="false">view_mode</string>
     <string name="view_mode_title">View mode</string>
     <string name="view_mode_description">List, Grid</string>
-    <string name="view_mode_list">list</string>
-    <string name="view_mode_grid">grid</string>
+    <string name="view_mode_value_list" translatable="false">list</string>
+    <string name="view_mode_value_grid" translatable="false">grid</string>
+    <string name="view_mode_entry_list">List</string>
+    <string name="view_mode_entry_grid">Grid</string>
 
     <!-- Theme -->
-    <string name="theme_key">theme</string>
+    <string name="theme_key" translatable="false">theme</string>
     <string name="theme_title">Theme</string>
     <string name="theme_description">System, Light, Dark</string>
-    <string name="theme_system">system</string>
-    <string name="theme_light">light</string>
-    <string name="theme_dark">dark</string>
+    <string name="theme_value_system" translatable="false">system</string>
+    <string name="theme_value_light" translatable="false">light</string>
+    <string name="theme_value_dark" translatable="false">dark</string>
+    <string name="theme_entry_system">System default</string>
+    <string name="theme_entry_light">Light</string>
+    <string name="theme_entry_dark">Dark</string>
+
+    <!-- Language -->
+    <string name="language_key" translatable="false">language</string>
+    <string name="language_title">Language</string>
+    <string name="language_description">Change the language of the app</string>
+    <string name="language_value_system" translatable="false">system</string>
+    <string name="language_value_en" translatable="false">en</string>
+    <string name="language_value_fi" translatable="false">fi</string>
+    <string name="language_entry_system">System default</string>
+    <string name="language_entry_en">English</string>
+    <string name="language_entry_fi">Finnish</string>
 
     <!-- Hide keyboard -->
-    <string name="hide_keyboard_key">hide_keyboard</string>
+    <string name="hide_keyboard_key" translatable="false">hide_keyboard</string>
     <string name="hide_keyboard_title">Hide keyboard</string>
     <string name="hide_keyboard_summary">Do not automatically show the keyboard</string>
 
     <!-- Export database -->
-    <string name="export_database_key">export_database</string>
+    <string name="export_database_key" translatable="false">export_database</string>
     <string name="export_database_title">Export</string>
     <string name="export_database_summary">Notes to a file</string>
     <string name="export_database_successful">Notes exported. Restart app to apply changes</string>
 
     <!-- Import database -->
-    <string name="import_database_key">import_database</string>
+    <string name="import_database_key" translatable="false">import_database</string>
     <string name="import_database_title">Import</string>
     <string name="import_database_summary">Notes from a file</string>
-    <string name="import_database_successful">Database imported. Restart app to apply changes</string>
+    <string name="import_database_successful">Notes imported. Restart app to apply changes</string>
 
     <!-- About -->
-    <string name="app_key">app</string>
-    <string name="author_key">author</string>
-    <string name="author_title">Author</string>
-    <string name="author_summary">Jankku</string>
+    <string name="app_key" translatable="false">app</string>
+    <string name="author_key" translatable="false">author</string>
+    <string name="author_title">Developer</string>
+    <string name="author_summary" translatable="false">Jankku</string>
 
-    <string name="github_key">github</string>
-    <string name="github_title">GitHub</string>
-    <string name="github_summary">https://github.com/jankku/notes</string>
-
+    <string name="github_key" translatable="false">github</string>
+    <string name="github_title" translatable="false">GitHub</string>
+    <string name="github_summary" translatable="false">https://github.com/jankku/notes</string>
 
     <!-- Shortcuts -->
     <string name="add_note">Add note</string>
+
 </resources>

@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.jankku.notes.ui.HomeFragment"
-        android:label="Notes"
+        android:label="@string/navigation_home_label"
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_addNoteFragment"
@@ -28,7 +28,7 @@
     <fragment
         android:id="@+id/addNoteFragment"
         android:name="com.jankku.notes.ui.AddNoteFragment"
-        android:label="Note"
+        android:label="@string/navigation_add_note_label"
         tools:layout="@layout/fragment_add_note">
         <argument
             android:name="noteId"
@@ -63,5 +63,5 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.jankku.notes.ui.SettingsFragment"
-        android:label="Settings"/>
+        android:label="@string/navigation_settings_label" />
 </navigation>

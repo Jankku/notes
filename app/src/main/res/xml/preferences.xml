@@ -9,7 +9,7 @@
             app:summary="@string/view_mode_description"
             app:title="@string/view_mode_title"
             android:icon="@drawable/ic_grid_view"
-            app:defaultValue="@string/view_mode_list"
+            app:defaultValue="@string/view_mode_value_list"
             app:entries="@array/view_mode_entries"
             app:entryValues="@array/view_mode_values" />
 
@@ -19,16 +19,26 @@
             app:title="@string/theme_title"
             android:dialogTitle="@string/theme_title"
             android:icon="@drawable/ic_light_mode"
-            app:defaultValue="@string/theme_system"
+            app:defaultValue="@string/theme_value_system"
             app:entries="@array/theme_entries"
             app:entryValues="@array/theme_values" />
+
+        <ListPreference
+            app:key="@string/language_key"
+            app:summary="@string/language_description"
+            app:title="@string/language_title"
+            android:dialogTitle="@string/language_title"
+            android:icon="@drawable/ic_language"
+            app:defaultValue="@string/language_value_system"
+            app:entries="@array/language_entries"
+            app:entryValues="@array/language_values" />
 
         <SwitchPreferenceCompat
             app:key="@string/hide_keyboard_key"
             app:title="@string/hide_keyboard_title"
             app:summary="@string/hide_keyboard_summary"
             app:defaultValue="false"
-            android:icon="@drawable/ic_keyboard_hide"/>
+            android:icon="@drawable/ic_keyboard_hide" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/export_import_header">

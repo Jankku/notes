@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fab_add_title">Luo</string>
+    <string name="menu_note_delete">Poista</string>
+    <string name="menu_selection_delete">Poista</string>
+    <string name="menu_selection_select_all">Valitse kaikki</string>
+    <string name="menu_main_settings">Asetukset</string>
+    <string name="noteTitle">Otsikko</string>
+    <string name="noteBody">Teksti</string>
+    <string name="createdOn">Luotu %1$s</string>
+    <string name="editedOn">Muokattu %1$s</string>
+    <string name="ui_header">Käyttöliittymä</string>
+    <string name="export_import_header">Vie &amp; Tuo</string>
+    <string name="about_header">Tietoja</string>
+    <string name="view_mode_description">Lista, Ruudukko</string>
+    <string name="no_notes">Ei muistiinpanoja</string>
+    <string name="theme_title">Teema</string>
+    <string name="theme_description">Järjestelmä, Vaalea, Tumma</string>
+    <string name="hide_keyboard_title">Piilota näppäimistö</string>
+    <string name="hide_keyboard_summary">Älä näytä näppäimistöä automaattisesti</string>
+    <string name="export_database_title">Vie</string>
+    <string name="import_database_title">Tuo</string>
+    <string name="export_database_summary">Muistiinpanot tiedostoon</string>
+    <string name="export_database_successful">Muistiinpanot viety. Käynnistä sovellus uudestaan ottaaksesi muutokset käyttöön</string>
+    <string name="import_database_summary">Muistiinpanot tiedostosta</string>
+    <string name="import_database_successful">Muistiinpanot tuotu. Käynnistä sovellus uudestaan ottaaksesi muutokset käyttöön</string>
+    <string name="author_title">Kehittäjä</string>
+    <string name="add_note">Lisää muistiinpano</string>
+    <string name="view_mode_title">Näkymä</string>
+    <string name="snackbar_note_deleted">Muistiinpano poistettu</string>
+    <string name="navigation_home_label">Muistiinpanot</string>
+    <string name="navigation_settings_label">Asetukset</string>
+    <string name="navigation_add_note_label">Muistiinpano</string>
+    <string name="view_mode_entry_list">Lista</string>
+    <string name="view_mode_entry_grid">Ruudukko</string>
+    <string name="theme_entry_system">Järjestelmä</string>
+    <string name="theme_entry_light">Vaalea</string>
+    <string name="theme_entry_dark">Tumma</string>
+    <string name="language_title">Kieli</string>
+    <string name="language_description">Vaihda sovelluksen kieltä</string>
+    <string name="language_entry_system">Järjestelmän kieli</string>
+    <string name="language_entry_en">Englanti</string>
+    <string name="language_entry_fi">Suomi</string>
+</resources>

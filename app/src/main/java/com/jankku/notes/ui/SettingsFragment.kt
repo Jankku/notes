@@ -1,10 +1,12 @@
 package com.jankku.notes.ui
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.LocaleList
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.preference.Preference
@@ -15,6 +17,7 @@ import com.jankku.notes.db.NoteDatabase
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.*
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -22,6 +25,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private var exportPref: Preference? = null
     private var importPref: Preference? = null
     private var themePref: Preference? = null
+    private var languagePref: Preference? = null
     private var versionPref: Preference? = null
     private var githubPref: Preference? = null
     private val EXPORT_REQ_CODE = 1
@@ -34,8 +38,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+
         themePref = findPreference(getString(R.string.theme_key))
         themePref?.onPreferenceChangeListener = themeListener
+
+        languagePref = findPreference(getString(R.string.language_key))
+        languagePref?.onPreferenceChangeListener = languageListener
 
         exportPref = findPreference(getString(R.string.export_database_key))
         exportPref?.onPreferenceClickListener = exportListener
@@ -54,8 +62,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Preference.OnPreferenceChangeListener { _, newValue ->
             newValue as? String
             when (newValue) {
-                getString(R.string.theme_light) -> updateTheme(MODE_NIGHT_NO)
-                getString(R.string.theme_dark) -> updateTheme(MODE_NIGHT_YES)
+                getString(R.string.theme_value_light) -> updateTheme(MODE_NIGHT_NO)
+                getString(R.string.theme_value_dark) -> updateTheme(MODE_NIGHT_YES)
                 else -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         updateTheme(MODE_NIGHT_FOLLOW_SYSTEM)
@@ -63,6 +71,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         updateTheme(MODE_NIGHT_AUTO_BATTERY)
                     }
                 }
+            }
+        }
+
+    private val languageListener =
+        Preference.OnPreferenceChangeListener { _, newValue ->
+            newValue as? String
+            when (newValue) {
+                getString(R.string.language_value_en) -> {
+                    updateLanguage(getString(R.string.language_value_en))
+                }
+                getString(R.string.language_value_fi) -> {
+                    updateLanguage(getString(R.string.language_value_fi))
+                }
+                else -> updateLanguage(getString(R.string.language_value_system))
             }
         }
 
@@ -86,6 +108,38 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun updateTheme(nightMode: Int): Boolean {
         setDefaultNightMode(nightMode)
+        requireActivity().recreate()
+        return true
+    }
+
+    // https://stackoverflow.com/questions/38997356/change-language-programmatically-android-n-7-0-api-24
+    private fun updateLanguage(language: String): Boolean {
+        val locale = Locale(language)
+        val configuration = application.resources.configuration
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val localeList = LocaleList(locale)
+
+            if (language == getString(R.string.language_value_system)) {
+                val defaultLanguage = Locale.getDefault()
+
+                configuration.setLocale(defaultLanguage)
+                Locale.setDefault(locale)
+                resources.updateConfiguration(configuration, application.resources.displayMetrics)
+                application.createConfigurationContext(configuration)
+            } else {
+                configuration.setLocale(locale)
+                configuration.setLocales(localeList)
+                Locale.setDefault(locale)
+                resources.updateConfiguration(configuration, application.resources.displayMetrics)
+                application.createConfigurationContext(configuration)
+            }
+        } else {
+            configuration.setLocale(locale)
+            Locale.setDefault(locale)
+            resources.updateConfiguration(configuration, application.resources.displayMetrics)
+        }
+
         requireActivity().recreate()
         return true
     }
@@ -147,13 +201,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == EXPORT_REQ_CODE) {
+        if (requestCode == EXPORT_REQ_CODE && resultCode == Activity.RESULT_OK) {
             val userChosenUri = data?.data ?: return
 
             exportDB(userChosenUri)
             Toast.makeText(context, R.string.export_database_successful, Toast.LENGTH_LONG)
                 .show()
-        } else if (requestCode == IMPORT_REQ_CODE) {
+        } else if (requestCode == IMPORT_REQ_CODE && resultCode == Activity.RESULT_OK) {
             val userChosenUri = data?.data ?: return
 
             importDB(userChosenUri)

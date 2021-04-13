@@ -34,7 +34,7 @@
                 <TextView
                     android:id="@+id/tvCreatedOn"
                     android:layout_width="match_parent"
-                    android:layout_height="26dp"
+                    android:layout_height="match_parent"
                     android:background="?attr/colorSurface"
                     android:paddingHorizontal="16dp"
                     android:paddingTop="4dp"
@@ -47,7 +47,7 @@
                 <TextView
                     android:id="@+id/tvEditedOn"
                     android:layout_width="match_parent"
-                    android:layout_height="26dp"
+                    android:layout_height="match_parent"
                     android:background="?attr/colorSurface"
                     android:paddingHorizontal="16dp"
                     android:paddingBottom="8dp"

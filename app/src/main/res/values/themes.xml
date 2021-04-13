@@ -4,11 +4,13 @@
         <item name="android:statusBarColor">?attr/colorPrimarySurface</item>
         <item name="android:navigationBarColor">?attr/colorSurface</item>
         <item name="android:colorBackground">?attr/colorSurface</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
         <item name="colorPrimaryDark" tools:targetApi="23">?attr/colorPrimary</item>
     </style>
 
     <style name="Theme.Notes" parent="Base.Theme.Notes">
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
+
         <item name="colorPrimary">?attr/colorSurface</item>
         <item name="colorPrimaryVariant">@color/green_500</item>
         <item name="colorOnPrimary">@color/white</item>

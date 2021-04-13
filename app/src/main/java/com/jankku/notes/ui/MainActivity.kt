@@ -2,6 +2,8 @@ package com.jankku.notes.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.os.LocaleList
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.navigation.findNavController
@@ -10,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.preference.PreferenceManager
 import com.jankku.notes.R
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,8 +24,8 @@ class MainActivity : AppCompatActivity() {
 
         // Set theme
         when (themePref) {
-            getString(R.string.theme_light) -> setDefaultNightMode(MODE_NIGHT_NO)
-            getString(R.string.theme_dark) -> setDefaultNightMode(MODE_NIGHT_YES)
+            getString(R.string.theme_value_light) -> setDefaultNightMode(MODE_NIGHT_NO)
+            getString(R.string.theme_value_dark) -> setDefaultNightMode(MODE_NIGHT_YES)
             else -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
@@ -32,6 +35,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Set language
+        val languagePref = PreferenceManager
+            .getDefaultSharedPreferences(applicationContext)
+            .getString(getString(R.string.language_key), getString(R.string.language_value_system))
+        Log.d("LOG_LANG_PREF", languagePref.toString())
+        when (languagePref) {
+            getString(R.string.language_value_en) -> updateLanguage(getString(R.string.language_value_en))
+            getString(R.string.language_value_fi) -> updateLanguage(getString(R.string.language_value_fi))
+            else -> updateLanguage(Locale.getDefault().language)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -39,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
 
         // Add note shortcut
-        if ("com.jankku.notes.addNote" == intent.action) {
+        if (intent.action == "com.jankku.notes.addNote") {
             navHostFragment.findNavController()
                 .navigate(HomeFragmentDirections.actionHomeFragmentToAddNoteFragment())
             intent.action = "android.intent.action.MAIN"
@@ -51,4 +65,32 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean =
         findNavController(R.id.nav_host_fragment).navigateUp()
+
+    private fun updateLanguage(language: String): Boolean {
+        val locale = Locale(language)
+        val configuration = application.resources.configuration
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (language == getString(R.string.language_value_system)) {
+                val defaultLanguage = Locale.getDefault()
+
+                configuration.setLocale(defaultLanguage)
+                Locale.setDefault(locale)
+                resources.updateConfiguration(configuration, application.resources.displayMetrics)
+                application.createConfigurationContext(configuration)
+            } else {
+                val localeList = LocaleList(locale)
+
+                configuration.setLocales(localeList)
+                Locale.setDefault(locale)
+                resources.updateConfiguration(configuration, application.resources.displayMetrics)
+                application.createConfigurationContext(configuration)
+            }
+        } else {
+            configuration.setLocale(locale)
+            Locale.setDefault(locale)
+            resources.updateConfiguration(configuration, application.resources.displayMetrics)
+        }
+        return true
+    }
 }

@@ -1,12 +1,9 @@
 package com.jankku.notes.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.View.GONE
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.widget.addTextChangedListener
@@ -21,7 +18,10 @@ import com.jankku.notes.databinding.FragmentAddNoteBinding
 import com.jankku.notes.db.Note
 import com.jankku.notes.db.NoteViewModel
 import com.jankku.notes.db.NoteViewModelFactory
-import java.text.SimpleDateFormat
+import com.jankku.notes.helper.Keyboard.Companion.hideKeyboard
+import com.jankku.notes.helper.Keyboard.Companion.showKeyboard
+import java.text.DateFormat
+import java.text.DateFormat.SHORT
 import java.util.*
 
 class AddNoteFragment : Fragment() {
@@ -56,7 +56,6 @@ class AddNoteFragment : Fragment() {
         return binding.root
     }
 
-    @SuppressLint("SimpleDateFormat")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -97,7 +96,7 @@ class AddNoteFragment : Fragment() {
         when (createdOn) {
             "" -> tvCreatedOn.visibility = GONE
             else -> {
-                val createdDate = SimpleDateFormat("dd/MM/yyyy HH:mm")
+                val createdDate = DateFormat.getDateTimeInstance(SHORT, SHORT)
                     .format(createdOn.toLong())
                     .toString()
                 tvCreatedOn.text = getString(R.string.createdOn, createdDate)
@@ -108,7 +107,7 @@ class AddNoteFragment : Fragment() {
             "" -> tvEditedOn.visibility = GONE
             "null" -> tvEditedOn.visibility = GONE
             else -> {
-                val editedDate = SimpleDateFormat("dd/MM/yyyy HH:mm")
+                val editedDate = DateFormat.getDateTimeInstance(SHORT, SHORT)
                     .format(editedOn.toLong())
                     .toString()
                 tvEditedOn.text = getString(R.string.editedOn, editedDate)
@@ -192,20 +191,5 @@ class AddNoteFragment : Fragment() {
         }.start()
 
         findNavController().navigateUp()
-    }
-
-    private fun EditText.showKeyboard() {
-        post {
-            if (this.requestFocus()) {
-                val imm =
-                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
-            }
-        }
-    }
-
-    private fun EditText.hideKeyboard() {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(this.windowToken, 0)
     }
 }

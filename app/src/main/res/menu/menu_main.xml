@@ -6,7 +6,6 @@
         android:id="@+id/action_settings"
         android:title="@string/menu_main_settings"
         android:icon="@drawable/ic_settings"
-        app:showAsAction="ifRoom"
-        android:tooltipText="@string/menu_main_settings" />
+        app:showAsAction="ifRoom" />
 
 </menu>
