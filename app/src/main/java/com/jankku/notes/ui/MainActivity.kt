@@ -66,11 +66,14 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean =
         findNavController(R.id.nav_host_fragment).navigateUp()
 
+    // https://stackoverflow.com/questions/38997356/change-language-programmatically-android-n-7-0-api-24
     private fun updateLanguage(language: String): Boolean {
         val locale = Locale(language)
         val configuration = application.resources.configuration
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val localeList = LocaleList(locale)
+
             if (language == getString(R.string.language_value_system)) {
                 val defaultLanguage = Locale.getDefault()
 
@@ -79,8 +82,7 @@ class MainActivity : AppCompatActivity() {
                 resources.updateConfiguration(configuration, application.resources.displayMetrics)
                 application.createConfigurationContext(configuration)
             } else {
-                val localeList = LocaleList(locale)
-
+                configuration.setLocale(locale)
                 configuration.setLocales(localeList)
                 Locale.setDefault(locale)
                 resources.updateConfiguration(configuration, application.resources.displayMetrics)
@@ -91,6 +93,7 @@ class MainActivity : AppCompatActivity() {
             Locale.setDefault(locale)
             resources.updateConfiguration(configuration, application.resources.displayMetrics)
         }
+
         return true
     }
 }

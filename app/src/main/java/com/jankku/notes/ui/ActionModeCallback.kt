@@ -28,9 +28,10 @@ class ActionModeCallback : ActionMode.Callback {
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
         val noteIdList = this.selectionTracker!!.selection.toList()
+
         when (item?.itemId) {
             R.id.action_select_all -> {
-                selectionTracker!!.setItemsSelected(noteList!!.asIterable(), true)
+                selectionTracker!!.setItemsSelected(noteIdList.asIterable(), true)
             }
             R.id.action_delete -> {
                 Thread {

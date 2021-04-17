@@ -122,7 +122,7 @@ class HomeFragment : Fragment() {
         recyclerView.setItemViewCacheSize(20)
 
         // Swipe to delete action
-        val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(adapter, requireContext()))
+        val itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter, requireContext()))
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         // Shrink FAB on scroll

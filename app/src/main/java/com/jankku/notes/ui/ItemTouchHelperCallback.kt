@@ -9,17 +9,29 @@ import com.jankku.notes.R
 
 // https://medium.com/@zackcosborn/step-by-step-recyclerview-swipe-to-delete-and-undo-7bbae1fce27e
 // https://www.geeksforgeeks.org/swipe-to-delete-and-undo-in-android-recyclerview/
-class SwipeToDeleteCallback(private val adapter: NoteAdapter, context: Context) :
-    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+// https://nayan.co/blog/Android/android-recycler-view-drag-and-drop/
+class ItemTouchHelperCallback(private val adapter: NoteAdapter, context: Context) :
+    ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+        ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+    ) {
 
-    val icon = ContextCompat.getDrawable(context, R.drawable.ic_delete)
+    val icon = ContextCompat.getDrawable(context, R.drawable.ic_delete_red)
 
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        return false
+        adapter.notifyItemMoved(viewHolder.absoluteAdapterPosition, target.absoluteAdapterPosition)
+        return true
+    }
+
+    override fun isLongPressDragEnabled(): Boolean = false
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        val itemPosition = viewHolder.absoluteAdapterPosition
+        adapter.deleteItem(itemPosition)
     }
 
     override fun onChildDraw(
@@ -51,10 +63,5 @@ class SwipeToDeleteCallback(private val adapter: NoteAdapter, context: Context) 
         }
 
         icon.draw(c)
-    }
-
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val itemPosition = viewHolder.absoluteAdapterPosition
-        adapter.deleteItem(itemPosition)
     }
 }
