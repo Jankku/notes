@@ -31,7 +31,7 @@ class ActionModeCallback : ActionMode.Callback {
 
         when (item?.itemId) {
             R.id.action_select_all -> {
-                selectionTracker!!.setItemsSelected(noteIdList.asIterable(), true)
+                selectionTracker!!.setItemsSelected(noteList!!.asIterable(), true)
             }
             R.id.action_delete -> {
                 Thread {
