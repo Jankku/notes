@@ -1,6 +1,6 @@
 # Notes
 
-Simple note taking Android app made in Kotlin.
+Simple notes Android app in Kotlin.
 
 ![Screenshots](screenshots.png)
 
