@@ -14,7 +14,7 @@ import com.jankku.notes.R
 import com.jankku.notes.db.Note
 
 
-class NoteAdapter internal constructor(
+class NoteAdapter(
     private val clickListener: (Note) -> Unit,
     private val swipeListener: (Int) -> Unit
 ) : ListAdapter<Note, NoteAdapter.NoteViewHolder>(NOTES_COMPARATOR) {
