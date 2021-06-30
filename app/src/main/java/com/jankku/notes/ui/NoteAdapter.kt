@@ -53,7 +53,7 @@ class NoteAdapter(
             note: Note,
         ) = with(itemView) {
             noteTitle.text = note.title
-            noteBody.text = note.body
+            noteBody.text = note.getTruncatedBody()
             noteId = note.id
             itemView.setOnClickListener { clickListener(note) }
             bindSelectedState(
