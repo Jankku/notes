@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="12dp"
     android:layout_marginHorizontal="8dp"
+    android:layout_marginTop="12dp"
     android:background="@drawable/note_item_container"
-    android:orientation="vertical"
+    android:clickable="true"
     android:focusable="true"
-    android:clickable="true">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tvNoteTitle"
+        style="@style/Notes.TextAppearance.Headline6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:paddingTop="12dp"
-        android:maxLines="10"
         android:ellipsize="end"
-        style="@style/Notes.TextAppearance.AppCompat.Title"
+        android:maxLines="3"
+        android:paddingTop="12dp"
         app:layout_constraintBottom_toTopOf="@id/tvNoteBody"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,14 +26,15 @@
 
     <TextView
         android:id="@+id/tvNoteBody"
+        style="@style/Notes.TextAppearance.Body2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
+        android:ellipsize="end"
+        android:maxLines="5"
         android:paddingTop="8dp"
         android:paddingBottom="12dp"
-        android:maxLines="10"
-        android:ellipsize="end"
-        style="@style/Notes.TextAppearance.MaterialComponents.Body2"
+        android:scrollHorizontally="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

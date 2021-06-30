@@ -15,24 +15,13 @@
 
         <item name="colorSurface">@color/grey_700</item>
         <item name="colorPrimarySurface">@color/grey_700</item>
+
+        <item name="android:textColor">@color/text_color_light</item>
+        <item name="android:textColorPrimary">@color/text_color_light</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary_light</item>
+
+        <item name="colorControlNormal">?colorPrimary</item>
+        <item name="colorControlActivated">?colorPrimaryDark</item>
     </style>
 
-    <style name="Notes.TextAppearance.AppCompat.Title" parent="TextAppearance.AppCompat.Title">
-        <item name="android:textColor">@color/white_87</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Notes.TextAppearance.MaterialComponents.Body1" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">@color/white_87</item>
-    </style>
-
-    <style name="Notes.TextAppearance.MaterialComponents.Body2" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textColor">@color/white_87</item>
-    </style>
-
-    <style name="Notes.Widget.MaterialComponents.ExtendedFloatingActionButton"
-        parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
-        <item name="android:layout_margin">16dp</item>
-        <item name="android:scrollbars">none</item>
-    </style>
 </resources>

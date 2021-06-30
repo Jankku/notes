@@ -1,41 +1,38 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Base.Theme.Notes" parent="Theme.MaterialComponents.DayNight">
-        <item name="android:statusBarColor">?attr/colorPrimarySurface</item>
+        <item name="android:statusBarColor">?attr/colorSurface</item>
         <item name="android:navigationBarColor">?attr/colorSurface</item>
         <item name="android:colorBackground">?attr/colorSurface</item>
         <item name="colorPrimaryDark" tools:targetApi="23">?attr/colorPrimary</item>
+
+        <item name="textAppearanceHeadline5">@style/Notes.TextAppearance.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/Notes.TextAppearance.Headline6</item>
+        <item name="textAppearanceBody1">@style/Notes.TextAppearance.Body1</item>
+        <item name="textAppearanceBody2">@style/Notes.TextAppearance.Body2</item>
     </style>
 
     <style name="Theme.Notes" parent="Base.Theme.Notes">
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
 
-        <item name="colorPrimary">?attr/colorSurface</item>
+        <item name="appBarLayoutStyle">@style/Widget.Notes.AppBarOverlay</item>
+        <item name="toolbarStyle">@style/Widget.Notes.ToolBar</item>
+
+        <item name="colorPrimary">@color/green_500</item>
         <item name="colorPrimaryVariant">@color/green_500</item>
         <item name="colorOnPrimary">@color/white</item>
 
         <item name="colorSecondary">@color/green_500</item>
         <item name="colorSecondaryVariant">@color/green_200</item>
         <item name="colorOnSecondary">@color/white</item>
+
+        <item name="android:textColor">@color/text_color_dark</item>
+        <item name="android:textColorPrimary">@color/text_color_dark</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary_dark</item>
+
+        <item name="colorControlNormal">?colorPrimary</item>
+        <item name="colorControlActivated">?colorPrimaryDark</item>
     </style>
 
-    <style name="Notes.TextAppearance.AppCompat.Title" parent="TextAppearance.AppCompat.Title">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="Notes.TextAppearance.MaterialComponents.Body1" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-    <style name="Notes.TextAppearance.MaterialComponents.Body2" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-    <style name="Notes.Widget.MaterialComponents.ExtendedFloatingActionButton"
-        parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
-        <item name="android:layout_margin">16dp</item>
-        <item name="android:scrollbars">none</item>
-    </style>
 </resources>
