@@ -9,17 +9,20 @@ import androidx.activity.addCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.preference.PreferenceManager
+import com.google.android.material.snackbar.Snackbar
 import com.jankku.notes.NotesApplication
 import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentAddNoteBinding
 import com.jankku.notes.db.Note
-import com.jankku.notes.db.NoteViewModel
-import com.jankku.notes.db.NoteViewModelFactory
-import com.jankku.notes.helper.Keyboard.Companion.hideKeyboard
-import com.jankku.notes.helper.Keyboard.Companion.showKeyboard
+import com.jankku.notes.util.Keyboard.Companion.hideKeyboard
+import com.jankku.notes.util.Keyboard.Companion.showKeyboard
+import com.jankku.notes.viewmodel.NoteViewModel
+import com.jankku.notes.viewmodel.NoteViewModelFactory
+import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.DateFormat.SHORT
 import java.util.*
@@ -38,7 +41,7 @@ class AddNoteFragment : Fragment() {
     }
 
     private val noteViewModel: NoteViewModel by viewModels {
-        NoteViewModelFactory((application as NotesApplication).repository)
+        NoteViewModelFactory((application as NotesApplication).noteDao)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,10 +146,19 @@ class AddNoteFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_delete -> {
                 etNoteBody.hideKeyboard()
-                Thread {
+
+                lifecycleScope.launch {
                     noteViewModel.delete(args.noteId.toLong())
-                }.start()
+                }
+
                 findNavController().navigateUp()
+
+                Snackbar.make(
+                    binding.etNoteBody,
+                    R.string.snackbar_note_deleted,
+                    Snackbar.LENGTH_LONG
+                ).show()
+
                 true
             }
             android.R.id.home -> {
@@ -156,7 +168,9 @@ class AddNoteFragment : Fragment() {
                 val timeInMs = Calendar.getInstance().timeInMillis
 
                 etNoteBody.hideKeyboard()
+
                 saveOrUpdateNote(id, title, body, timeInMs)
+
                 true
             }
             else -> {
@@ -182,13 +196,13 @@ class AddNoteFragment : Fragment() {
             return
         }
 
-        Thread {
+        lifecycleScope.launch {
             val id = noteId.toLong()
             when (noteId) {
                 "-1" -> noteViewModel.insert(Note(0, title, body, timeInMs, null))
                 else -> noteViewModel.update(id, title, body, timeInMs)
             }
-        }.start()
+        }
 
         findNavController().navigateUp()
     }
