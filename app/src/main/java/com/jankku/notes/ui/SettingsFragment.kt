@@ -9,11 +9,15 @@ import android.os.Bundle
 import android.os.LocaleList
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate.*
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.jankku.notes.BuildConfig
 import com.jankku.notes.R
 import com.jankku.notes.db.NoteDatabase
+import com.jankku.notes.util.Constants.EXPORT_REQ_CODE
+import com.jankku.notes.util.Constants.IMPORT_REQ_CODE
+import kotlinx.coroutines.launch
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
@@ -28,8 +32,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private var languagePref: Preference? = null
     private var versionPref: Preference? = null
     private var githubPref: Preference? = null
-    private val EXPORT_REQ_CODE = 1
-    private val IMPORT_REQ_CODE = 2
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -125,19 +127,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
                 configuration.setLocale(defaultLanguage)
                 Locale.setDefault(locale)
-                resources.updateConfiguration(configuration, application.resources.displayMetrics)
+                requireContext().createConfigurationContext(configuration)
                 application.createConfigurationContext(configuration)
             } else {
                 configuration.setLocale(locale)
                 configuration.setLocales(localeList)
                 Locale.setDefault(locale)
-                resources.updateConfiguration(configuration, application.resources.displayMetrics)
+                requireContext().createConfigurationContext(configuration)
                 application.createConfigurationContext(configuration)
             }
         } else {
             configuration.setLocale(locale)
             Locale.setDefault(locale)
-            resources.updateConfiguration(configuration, application.resources.displayMetrics)
+            requireContext().createConfigurationContext(configuration)
         }
 
         requireActivity().recreate()
@@ -146,10 +148,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
 
     private fun exportDBIntent() {
+        val formattedDate = String.format("%1tY%<tm%<td-%<tH%<tM", Date())
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_DEFAULT)
             type = "application/vnd.sqlite3"
-            putExtra(Intent.EXTRA_TITLE, "database.db")
+            putExtra(Intent.EXTRA_TITLE, "notes-${formattedDate}.db")
         }
         startActivityForResult(intent, EXPORT_REQ_CODE)
     }
@@ -186,18 +189,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun importDB(userChosenUri: Uri) {
         NoteDatabase.destroyInstance()
 
-        Thread {
+        lifecycleScope.launch {
             try {
                 val dbPath = requireActivity().getDatabasePath(NoteDatabase.DATABASE_NAME)
                 val inputStream = requireActivity().contentResolver.openInputStream(userChosenUri)
                 val outputStream = FileOutputStream(dbPath)
 
-                val data = inputStream?.readBytes() ?: return@Thread
+                val data = inputStream?.readBytes() ?: return@launch
                 outputStream.write(data, 0, data.size)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-        }.start()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -14,23 +14,22 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.google.android.material.snackbar.Snackbar
 import com.jankku.notes.NotesApplication
 import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentHomeBinding
-import com.jankku.notes.db.NoteViewModel
-import com.jankku.notes.db.NoteViewModelFactory
+import com.jankku.notes.viewmodel.NoteViewModel
+import com.jankku.notes.viewmodel.NoteViewModelFactory
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: NoteAdapter
+    private var _adapter: NoteAdapter? = null
+    private val adapter get() = _adapter!!
+    private var actionMode: ActionMode? = null
     private lateinit var application: Context
     private lateinit var selectionTracker: SelectionTracker<Long>
-    private var actionMode: ActionMode? = null
     private var noteList: MutableList<Long> = mutableListOf()
 
     override fun onAttach(context: Context) {
@@ -39,7 +38,7 @@ class HomeFragment : Fragment() {
     }
 
     private val noteViewModel: NoteViewModel by viewModels {
-        NoteViewModelFactory((application as NotesApplication).repository)
+        NoteViewModelFactory((application as NotesApplication).noteDao)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,14 +51,30 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
+        setupObservers()
+        setupSelectionTracker()
 
+        binding.fabAdd.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_addNoteFragment)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        _adapter = null
+        actionMode?.finish()
+        actionMode = null
+    }
+
+    private fun setupObservers() {
         noteViewModel.allNotes.observe(viewLifecycleOwner) { list ->
             list.let {
                 adapter.submitList(it)
@@ -75,8 +90,10 @@ class HomeFragment : Fragment() {
                 binding.noNotes.clNoNotes.visibility = View.GONE
             }
         }
+    }
 
-        adapter = NoteAdapter(
+    private fun setupRecyclerView() {
+        _adapter = NoteAdapter(
             { note -> // Click listener
                 val action = HomeFragmentDirections.actionHomeFragmentToAddNoteFragment(
                     noteId = note.id.toString(),
@@ -91,7 +108,7 @@ class HomeFragment : Fragment() {
             val noteId = noteList[position]
 
             Snackbar.make(
-                recyclerView,
+                binding.recyclerview,
                 R.string.snackbar_note_deleted,
                 Snackbar.LENGTH_LONG
             ).show()
@@ -103,31 +120,29 @@ class HomeFragment : Fragment() {
             noteViewModel.delete(noteId)
         }
 
-        recyclerView = binding.recyclerview
-
         val viewModePreference = PreferenceManager
             .getDefaultSharedPreferences(application)
             .getString(getString(R.string.view_mode_key), null)
 
         if (viewModePreference == "list") {
-            recyclerView.layoutManager = object : LinearLayoutManager(application) {
+            binding.recyclerview.layoutManager = object : LinearLayoutManager(application) {
                 override fun supportsPredictiveItemAnimations(): Boolean = false
             }
         } else {
-            recyclerView.layoutManager = StaggeredGridLayoutManager(2, VERTICAL)
+            binding.recyclerview.layoutManager =
+                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         }
 
-        recyclerView.adapter = adapter
-        recyclerView.setHasFixedSize(true)
-        recyclerView.setItemViewCacheSize(20)
+        binding.recyclerview.setHasFixedSize(true)
+        binding.recyclerview.adapter = adapter
 
         // Swipe to delete action
         val itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter, requireContext()))
-        itemTouchHelper.attachToRecyclerView(recyclerView)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerview)
 
         // Shrink FAB on scroll
         // https://stackoverflow.com/questions/32038332/using-google-design-library-how-to-hide-fab-button-on-scroll-down
-        recyclerView.addOnScrollListener(
+        binding.recyclerview.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (dy > 10)
@@ -136,18 +151,19 @@ class HomeFragment : Fragment() {
                         binding.fabAdd.extend()
                 }
             })
+    }
 
+    private fun setupSelectionTracker() {
         selectionTracker = SelectionTracker.Builder(
             "itemSelection",
-            recyclerView,
+            binding.recyclerview,
             NoteKeyProvider(adapter),
-            NoteDetailsLookup(recyclerView),
+            NoteDetailsLookup(binding.recyclerview),
             StorageStrategy.createLongStorage()
         ).withSelectionPredicate(
             SelectionPredicates.createSelectAnything()
         ).build()
 
-        selectionTracker.onRestoreInstanceState(savedInstanceState)
         adapter.selectionTracker = selectionTracker
 
         selectionTracker.addObserver(
@@ -157,10 +173,6 @@ class HomeFragment : Fragment() {
                     actionModeSelection(selectedItems)
                 }
             })
-
-        binding.fabAdd.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_addNoteFragment)
-        }
     }
 
     private fun actionModeSelection(selectedItems: Int) {
@@ -201,12 +213,5 @@ class HomeFragment : Fragment() {
         if (::selectionTracker.isInitialized) {
             selectionTracker.onSaveInstanceState(outState)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-        actionMode?.finish()
-        actionMode = null
     }
 }

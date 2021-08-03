@@ -6,7 +6,7 @@ import android.view.MenuItem
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.selection.SelectionTracker
 import com.jankku.notes.R
-import com.jankku.notes.db.NoteViewModel
+import com.jankku.notes.viewmodel.NoteViewModel
 
 // https://stackoverflow.com/questions/62883686/contextual-action-bar-with-androidx-navigation-component
 class ActionModeCallback : ActionMode.Callback {

@@ -1,4 +1,4 @@
-package com.jankku.notes.helper
+package com.jankku.notes.util
 
 import android.content.Context
 import android.view.inputmethod.InputMethodManager

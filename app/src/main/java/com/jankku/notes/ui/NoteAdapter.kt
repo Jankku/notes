@@ -17,7 +17,7 @@ import com.jankku.notes.db.Note
 class NoteAdapter(
     private val clickListener: (Note) -> Unit,
     private val swipeListener: (Int) -> Unit
-) : ListAdapter<Note, NoteAdapter.NoteViewHolder>(NOTES_COMPARATOR) {
+) : ListAdapter<Note, NoteAdapter.NoteViewHolder>(DiffUtil) {
 
     lateinit var selectionTracker: SelectionTracker<Long>
 
@@ -76,7 +76,7 @@ class NoteAdapter(
     }
 
     companion object {
-        private val NOTES_COMPARATOR = object : DiffUtil.ItemCallback<Note>() {
+        private val DiffUtil = object : DiffUtil.ItemCallback<Note>() {
             override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
                 return oldItem.id == newItem.id
             }
