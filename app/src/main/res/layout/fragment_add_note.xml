@@ -32,6 +32,7 @@
 
             <TextView
                 android:id="@+id/tvCreatedOn"
+                style="@style/TextAppearance.MaterialComponents.Subtitle2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?attr/colorSurface"
@@ -45,6 +46,7 @@
 
             <TextView
                 android:id="@+id/tvEditedOn"
+                style="@style/TextAppearance.MaterialComponents.Subtitle2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?attr/colorSurface"
@@ -58,8 +60,8 @@
 
             <EditText
                 android:id="@+id/etNoteTitle"
-                style="@style/Notes.TextAppearance.Headline5"
-                android:layout_width="415dp"
+                style="@style/Notes.TextAppearance.Body1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorSurface"
                 android:gravity="top|start"
@@ -69,6 +71,7 @@
                 android:paddingHorizontal="16dp"
                 android:paddingTop="12dp"
                 android:scrollbars="none"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/etNoteBody"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -76,7 +79,7 @@
 
             <EditText
                 android:id="@+id/etNoteBody"
-                style="@style/Notes.TextAppearance.Body1"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorSurface"
