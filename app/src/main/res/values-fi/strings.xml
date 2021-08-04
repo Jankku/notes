@@ -41,4 +41,6 @@
     <string name="language_entry_system">Järjestelmän kieli</string>
     <string name="language_entry_en">Englanti</string>
     <string name="language_entry_fi">Suomi</string>
+    <string name="show_save_fab_title">Näytä tallennus nappi</string>
+    <string name="show_save_fab_summary">Nappi näkyy muokkaus sivulla</string>
 </resources>

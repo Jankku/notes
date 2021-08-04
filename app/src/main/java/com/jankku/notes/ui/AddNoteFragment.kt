@@ -3,7 +3,6 @@ package com.jankku.notes.ui
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.view.View.GONE
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.widget.addTextChangedListener
@@ -24,15 +23,14 @@ import com.jankku.notes.viewmodel.NoteViewModel
 import com.jankku.notes.viewmodel.NoteViewModelFactory
 import kotlinx.coroutines.launch
 import java.text.DateFormat
-import java.text.DateFormat.SHORT
 import java.util.*
 
 class AddNoteFragment : Fragment() {
 
     private var _binding: FragmentAddNoteBinding? = null
     private val binding get() = _binding!!
-    private var application: Context? = null
     private val args: AddNoteFragmentArgs by navArgs()
+    private var application: Context? = null
     private var noteEdited: Boolean = false
 
     override fun onAttach(context: Context) {
@@ -54,78 +52,17 @@ class AddNoteFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentAddNoteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Arguments
-        val noteId = args.noteId
-        val noteTitle = args.noteTitle
-        val noteBody = args.noteBody
-        val createdOn = args.createdOn
-        val editedOn = args.editedOn
-
-        // Views
-        val etNoteTitle = binding.etNoteTitle
-        val etNoteBody = binding.etNoteBody
-        val tvCreatedOn = binding.tvCreatedOn
-        val tvEditedOn = binding.tvEditedOn
-
-        etNoteTitle.setText(noteTitle, TextView.BufferType.EDITABLE)
-        etNoteBody.setText(noteBody, TextView.BufferType.EDITABLE)
-
-        etNoteTitle.addTextChangedListener {
-            noteEdited = true
-        }
-
-        etNoteBody.addTextChangedListener {
-            noteEdited = true
-        }
-
-        val keyboardPref = PreferenceManager
-            .getDefaultSharedPreferences(application)
-            .getBoolean(getString(R.string.hide_keyboard_key), false)
-
-        // Show keyboard if hide keyboard setting is false
-        if (!keyboardPref) {
-            etNoteBody.showKeyboard()
-            etNoteBody.setSelection(etNoteBody.length())
-        }
-
-        when (createdOn) {
-            "" -> tvCreatedOn.visibility = GONE
-            else -> {
-                val createdDate = DateFormat.getDateTimeInstance(SHORT, SHORT)
-                    .format(createdOn.toLong())
-                    .toString()
-                tvCreatedOn.text = getString(R.string.createdOn, createdDate)
-            }
-        }
-
-        when (editedOn) {
-            "" -> tvEditedOn.visibility = GONE
-            "null" -> tvEditedOn.visibility = GONE
-            else -> {
-                val editedDate = DateFormat.getDateTimeInstance(SHORT, SHORT)
-                    .format(editedOn.toLong())
-                    .toString()
-                tvEditedOn.text = getString(R.string.editedOn, editedDate)
-            }
-        }
-
-        // Save/update note on back press if the note isn't empty
-        // https://developer.android.com/guide/navigation/navigation-custom-back
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            val title = etNoteTitle.text.toString()
-            val body = etNoteBody.text.toString()
-            val timeInMs = Calendar.getInstance().timeInMillis
-
-            saveOrUpdateNote(noteId, title, body, timeInMs)
-        }
+        preferences()
+        setupTextFields()
+        setupInfoFields()
+        setupSaveNoteOnBackPress()
+        setupSaveFab()
     }
 
     override fun onDestroyView() {
@@ -133,50 +70,85 @@ class AddNoteFragment : Fragment() {
         _binding = null
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        // If note exists, inflate menu
-        if (args.noteId != "-1") {
-            inflater.inflate(R.menu.menu_note, menu)
+    private fun setupTextFields() {
+        binding.etNoteTitle.setText(args.noteTitle, TextView.BufferType.EDITABLE)
+        binding.etNoteBody.setText(args.noteBody, TextView.BufferType.EDITABLE)
+
+        binding.etNoteTitle.addTextChangedListener {
+            noteEdited = true
+        }
+
+        binding.etNoteBody.addTextChangedListener {
+            noteEdited = true
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val etNoteBody = binding.etNoteBody
+    private fun preferences() {
+        val keyboardPref = PreferenceManager
+            .getDefaultSharedPreferences(application)
+            .getBoolean(getString(R.string.hide_keyboard_key), false)
 
-        return when (item.itemId) {
-            R.id.action_delete -> {
-                etNoteBody.hideKeyboard()
+        // Show keyboard if hide keyboard setting is false
+        if (!keyboardPref) {
+            binding.etNoteBody.showKeyboard()
+            binding.etNoteBody.setSelection(binding.etNoteBody.length())
+        }
 
-                lifecycleScope.launch {
-                    noteViewModel.delete(args.noteId.toLong())
-                }
+        val saveFabPref = PreferenceManager
+            .getDefaultSharedPreferences(application)
+            .getBoolean(getString(R.string.show_save_fab_key), false)
 
-                findNavController().navigateUp()
+        // Show save FAB if the preference is true
+        if (saveFabPref) {
+            binding.fabSave.visibility = View.VISIBLE
+        }
+    }
 
-                Snackbar.make(
-                    binding.etNoteBody,
-                    R.string.snackbar_note_deleted,
-                    Snackbar.LENGTH_LONG
-                ).show()
-
-                true
-            }
-            android.R.id.home -> {
-                val id = args.noteId
-                val title = binding.etNoteTitle.text.toString()
-                val body = binding.etNoteBody.text.toString()
-                val timeInMs = Calendar.getInstance().timeInMillis
-
-                etNoteBody.hideKeyboard()
-
-                saveOrUpdateNote(id, title, body, timeInMs)
-
-                true
-            }
+    private fun setupInfoFields() {
+        when (args.createdOn) {
+            "" -> binding.tvCreatedOn.visibility = View.GONE
             else -> {
-                etNoteBody.hideKeyboard()
-                super.onOptionsItemSelected(item)
+                val createdDate = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+                    .format(args.createdOn.toLong())
+                    .toString()
+                binding.tvCreatedOn.text = getString(R.string.createdOn, createdDate)
             }
+        }
+
+        when (args.editedOn) {
+            "" -> binding.tvEditedOn.visibility = View.GONE
+            "null" -> binding.tvEditedOn.visibility = View.GONE
+            else -> {
+                val editedDate = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+                    .format(args.editedOn.toLong())
+                    .toString()
+                binding.tvEditedOn.text = getString(R.string.editedOn, editedDate)
+            }
+        }
+    }
+
+    private fun setupSaveNoteOnBackPress() {
+        // Save/update note on back press if the note isn't empty
+        // https://developer.android.com/guide/navigation/navigation-custom-back
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            saveOrUpdateNote(
+                args.noteId,
+                binding.etNoteTitle.text.toString(),
+                binding.etNoteBody.text.toString(),
+                Calendar.getInstance().timeInMillis
+            )
+        }
+    }
+
+    private fun setupSaveFab() {
+        binding.fabSave.setOnClickListener {
+            binding.etNoteBody.hideKeyboard()
+            saveOrUpdateNote(
+                args.noteId,
+                binding.etNoteTitle.text.toString(),
+                binding.etNoteBody.text.toString(),
+                Calendar.getInstance().timeInMillis
+            )
         }
     }
 
@@ -205,5 +177,54 @@ class AddNoteFragment : Fragment() {
         }
 
         findNavController().navigateUp()
+    }
+
+    private fun deleteNote(noteId: String) {
+        lifecycleScope.launch {
+            noteViewModel.delete(noteId.toLong())
+        }
+
+        findNavController().navigateUp()
+
+        Snackbar.make(
+            binding.etNoteBody,
+            R.string.snackbar_note_deleted,
+            Snackbar.LENGTH_LONG
+        ).show()
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        // If note exists, inflate menu
+        if (args.noteId != "-1") {
+            inflater.inflate(R.menu.menu_note, menu)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_delete -> {
+                binding.etNoteBody.hideKeyboard()
+                deleteNote(args.noteId)
+
+                true
+            }
+            android.R.id.home -> {
+                binding.etNoteBody.hideKeyboard()
+
+                saveOrUpdateNote(
+                    args.noteId,
+                    binding.etNoteTitle.text.toString(),
+                    binding.etNoteBody.text.toString(),
+                    Calendar.getInstance().timeInMillis
+                )
+
+                true
+            }
+            else -> {
+                binding.etNoteBody.hideKeyboard()
+                super.onOptionsItemSelected(item)
+            }
+        }
     }
 }

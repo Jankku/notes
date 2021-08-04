@@ -39,6 +39,13 @@
             app:summary="@string/hide_keyboard_summary"
             app:defaultValue="false"
             android:icon="@drawable/ic_keyboard_hide" />
+
+        <SwitchPreferenceCompat
+            android:icon="@drawable/ic_add_circle"
+            app:defaultValue="false"
+            app:key="@string/show_save_fab_key"
+            app:summary="@string/show_save_fab_summary"
+            app:title="@string/show_save_fab_title" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/export_import_header">

@@ -67,6 +67,11 @@
     <string name="hide_keyboard_title">Hide keyboard</string>
     <string name="hide_keyboard_summary">Do not automatically show the keyboard</string>
 
+    <!-- Show save FAB on edit screen -->
+    <string name="show_save_fab_key" translatable="false">show_save_fab</string>
+    <string name="show_save_fab_title">Show save FAB</string>
+    <string name="show_save_fab_summary">The FAB is displayed on edit screen</string>
+
     <!-- Export database -->
     <string name="export_database_key" translatable="false">export_database</string>
     <string name="export_database_title">Export</string>
