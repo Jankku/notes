@@ -4,13 +4,12 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.jankku.notes.R
+import com.jankku.notes.databinding.NoteItemBinding
 import com.jankku.notes.db.Note
 
 
@@ -18,7 +17,6 @@ class NoteAdapter(
     private val clickListener: (Note) -> Unit,
     private val swipeListener: (Int) -> Unit
 ) : ListAdapter<Note, NoteAdapter.NoteViewHolder>(DiffUtil) {
-
     lateinit var selectionTracker: SelectionTracker<Long>
 
     init {
@@ -26,9 +24,8 @@ class NoteAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        val view: View = LayoutInflater.from(parent.context)
-            .inflate(R.layout.note_item, parent, false)
-        return NoteViewHolder(view)
+        val binding = NoteItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return NoteViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
@@ -42,18 +39,15 @@ class NoteAdapter(
         swipeListener(itemPosition)
     }
 
-    inner class NoteViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
-
-        private val noteTitle: TextView = itemView.findViewById(R.id.tvNoteTitle)
-        private val noteBody: TextView = itemView.findViewById(R.id.tvNoteBody)
+    inner class NoteViewHolder(private val binding: NoteItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         private var noteId: Long? = null
 
         fun bind(
             note: Note,
         ) = with(itemView) {
-            noteTitle.text = note.title
-            noteBody.text = note.getTruncatedBody()
+            binding.tvNoteTitle.text = note.title
+            binding.tvNoteBody.text = note.getTruncatedBody()
             noteId = note.id
             itemView.setOnClickListener { clickListener(note) }
             bindSelectedState(

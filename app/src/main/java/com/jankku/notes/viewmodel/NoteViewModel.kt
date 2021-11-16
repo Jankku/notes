@@ -1,15 +1,11 @@
 package com.jankku.notes.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.jankku.notes.db.Note
 import com.jankku.notes.db.NoteDao
 import kotlinx.coroutines.launch
 
 class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {
-
     val allNotes: LiveData<List<Note>> = noteDao.getAll().asLiveData()
 
     fun insert(note: Note) = viewModelScope.launch { noteDao.insert(note) }
@@ -18,4 +14,14 @@ class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {
         viewModelScope.launch { noteDao.update(id, title, body, editedOn) }
 
     fun delete(noteId: Long) = viewModelScope.launch { noteDao.delete(noteId) }
+}
+
+class NoteViewModelFactory(private val noteDao: NoteDao) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(NoteViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return NoteViewModel(noteDao) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
 }

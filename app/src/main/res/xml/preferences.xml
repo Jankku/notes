@@ -1,44 +1,43 @@
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="@string/ui_header">
 
         <ListPreference
-            app:key="@string/view_mode_key"
-            app:summary="@string/view_mode_description"
-            app:title="@string/view_mode_title"
             android:icon="@drawable/ic_grid_view"
             app:defaultValue="@string/view_mode_value_list"
             app:entries="@array/view_mode_entries"
-            app:entryValues="@array/view_mode_values" />
+            app:entryValues="@array/view_mode_values"
+            app:key="@string/view_mode_key"
+            app:summary="@string/view_mode_description"
+            app:title="@string/view_mode_title" />
 
         <ListPreference
-            app:key="@string/theme_key"
-            app:summary="@string/theme_description"
-            app:title="@string/theme_title"
             android:dialogTitle="@string/theme_title"
             android:icon="@drawable/ic_light_mode"
             app:defaultValue="@string/theme_value_system"
             app:entries="@array/theme_entries"
-            app:entryValues="@array/theme_values" />
+            app:entryValues="@array/theme_values"
+            app:key="@string/theme_key"
+            app:summary="@string/theme_description"
+            app:title="@string/theme_title" />
 
         <ListPreference
-            app:key="@string/language_key"
-            app:summary="@string/language_description"
-            app:title="@string/language_title"
             android:dialogTitle="@string/language_title"
             android:icon="@drawable/ic_language"
             app:defaultValue="@string/language_value_system"
             app:entries="@array/language_entries"
-            app:entryValues="@array/language_values" />
+            app:entryValues="@array/language_values"
+            app:key="@string/language_key"
+            app:summary="@string/language_description"
+            app:title="@string/language_title" />
 
         <SwitchPreferenceCompat
-            app:key="@string/hide_keyboard_key"
-            app:title="@string/hide_keyboard_title"
-            app:summary="@string/hide_keyboard_summary"
+            android:icon="@drawable/ic_keyboard_hide"
             app:defaultValue="false"
-            android:icon="@drawable/ic_keyboard_hide" />
+            app:key="@string/hide_keyboard_key"
+            app:summary="@string/hide_keyboard_summary"
+            app:title="@string/hide_keyboard_title" />
 
         <SwitchPreferenceCompat
             android:icon="@drawable/ic_add_circle"
@@ -50,35 +49,35 @@
 
     <PreferenceCategory app:title="@string/export_import_header">
         <Preference
+            android:icon="@drawable/ic_save"
             app:key="@string/export_database_key"
-            app:title="@string/export_database_title"
             app:summary="@string/export_database_summary"
-            android:icon="@drawable/ic_save"/>
+            app:title="@string/export_database_title" />
 
         <Preference
+            android:icon="@drawable/ic_upload_file"
             app:key="@string/import_database_key"
-            app:title="@string/import_database_title"
             app:summary="@string/import_database_summary"
-            android:icon="@drawable/ic_upload_file"/>
+            app:title="@string/import_database_title" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/about_header">
         <Preference
+            app:icon="@drawable/ic_android"
             app:key="@string/app_key"
-            app:title="@string/app_name"
-            app:icon="@drawable/ic_android"/>
+            app:title="@string/app_name" />
 
         <Preference
+            app:icon="@drawable/ic_person"
             app:key="@string/author_key"
-            app:title="@string/author_title"
             app:summary="@string/author_summary"
-            app:icon="@drawable/ic_person"/>
+            app:title="@string/author_title" />
 
         <Preference
+            app:icon="@drawable/ic_github"
             app:key="@string/github_key"
-            app:title="@string/github_title"
             app:summary="@string/github_summary"
-            app:icon="@drawable/ic_github"/>
+            app:title="@string/github_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

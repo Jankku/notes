@@ -189,7 +189,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun importDB(userChosenUri: Uri) {
         NoteDatabase.destroyInstance()
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val dbPath = requireActivity().getDatabasePath(NoteDatabase.DATABASE_NAME)
                 val inputStream = requireActivity().contentResolver.openInputStream(userChosenUri)

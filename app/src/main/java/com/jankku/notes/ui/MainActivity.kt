@@ -7,9 +7,8 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.findNavController
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.preference.PreferenceManager
 import com.jankku.notes.R
@@ -17,6 +16,7 @@ import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val themePref = PreferenceManager
@@ -52,21 +52,22 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
         // Add note shortcut
         if (intent.action == "com.jankku.notes.addNote") {
-            navHostFragment.findNavController()
-                .navigate(HomeFragmentDirections.actionHomeFragmentToAddNoteFragment())
+            navController.navigate(HomeFragmentDirections.actionHomeFragmentToAddNoteFragment())
             intent.action = "android.intent.action.MAIN"
         }
 
-        setupActionBarWithNavController(navHostFragment.findNavController())
+        setupActionBarWithNavController(navController)
         supportActionBar!!.elevation = 0f
     }
 
-    override fun onSupportNavigateUp(): Boolean =
-        findNavController(R.id.nav_host_fragment).navigateUp()
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
+    }
 
     // https://stackoverflow.com/questions/38997356/change-language-programmatically-android-n-7-0-api-24
     private fun updateLanguage(language: String): Boolean {

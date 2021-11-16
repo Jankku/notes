@@ -60,18 +60,15 @@ class HomeFragment : Fragment() {
         setupRecyclerView()
         setupObservers()
         setupSelectionTracker()
-
-        binding.fabAdd.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_addNoteFragment)
-        }
+        setupAddFab()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
-        _adapter = null
         actionMode?.finish()
         actionMode = null
+        _adapter = null
+        _binding = null
     }
 
     private fun setupObservers() {
@@ -108,7 +105,7 @@ class HomeFragment : Fragment() {
             val noteId = noteList[position]
 
             Snackbar.make(
-                binding.recyclerview,
+                binding.root,
                 R.string.snackbar_note_deleted,
                 Snackbar.LENGTH_LONG
             ).show()
@@ -139,6 +136,13 @@ class HomeFragment : Fragment() {
         // Swipe to delete action
         val itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter, requireContext()))
         itemTouchHelper.attachToRecyclerView(binding.recyclerview)
+    }
+
+
+    private fun setupAddFab() {
+        binding.fabAdd.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_addNoteFragment)
+        }
 
         // Shrink FAB on scroll
         // https://stackoverflow.com/questions/32038332/using-google-design-library-how-to-hide-fab-button-on-scroll-down
@@ -160,9 +164,7 @@ class HomeFragment : Fragment() {
             NoteKeyProvider(adapter),
             NoteDetailsLookup(binding.recyclerview),
             StorageStrategy.createLongStorage()
-        ).withSelectionPredicate(
-            SelectionPredicates.createSelectAnything()
-        ).build()
+        ).withSelectionPredicate(SelectionPredicates.createSelectAnything()).build()
 
         adapter.selectionTracker = selectionTracker
 
@@ -177,20 +179,19 @@ class HomeFragment : Fragment() {
 
     private fun actionModeSelection(selectedItems: Int) {
         val actionModeCallback = ActionModeCallback()
-        actionMode =
-            if (selectedItems == 0) {
-                actionMode?.finish()
-                null
-            } else {
-                actionModeCallback.startActionMode(
-                    requireActivity(),
-                    selectionTracker,
-                    noteViewModel,
-                    adapter,
-                    noteList,
-                    selectionTracker.selection.size().toString()
-                )
-            }
+        actionMode = if (selectedItems == 0) {
+            actionMode?.finish()
+            null
+        } else {
+            actionModeCallback.startActionMode(
+                requireActivity(),
+                selectionTracker,
+                noteViewModel,
+                adapter,
+                noteList,
+                selectionTracker.selection.size().toString()
+            )
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

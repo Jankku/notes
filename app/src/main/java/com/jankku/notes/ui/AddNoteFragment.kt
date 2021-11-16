@@ -12,13 +12,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
 import com.jankku.notes.NotesApplication
 import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentAddNoteBinding
 import com.jankku.notes.db.Note
-import com.jankku.notes.util.Keyboard.Companion.hideKeyboard
-import com.jankku.notes.util.Keyboard.Companion.showKeyboard
+import com.jankku.notes.util.hideKeyboard
+import com.jankku.notes.util.showKeyboard
+import com.jankku.notes.util.showSnackBar
 import com.jankku.notes.viewmodel.NoteViewModel
 import com.jankku.notes.viewmodel.NoteViewModelFactory
 import kotlinx.coroutines.launch
@@ -168,7 +168,7 @@ class AddNoteFragment : Fragment() {
             return
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val id = noteId.toLong()
             when (noteId) {
                 "-1" -> noteViewModel.insert(Note(0, title, body, timeInMs, null))
@@ -180,17 +180,12 @@ class AddNoteFragment : Fragment() {
     }
 
     private fun deleteNote(noteId: String) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             noteViewModel.delete(noteId.toLong())
         }
 
         findNavController().navigateUp()
-
-        Snackbar.make(
-            binding.etNoteBody,
-            R.string.snackbar_note_deleted,
-            Snackbar.LENGTH_LONG
-        ).show()
+        showSnackBar(binding.root, getString(R.string.snackbar_note_deleted))
     }
 
 
@@ -206,19 +201,16 @@ class AddNoteFragment : Fragment() {
             R.id.action_delete -> {
                 binding.etNoteBody.hideKeyboard()
                 deleteNote(args.noteId)
-
                 true
             }
             android.R.id.home -> {
                 binding.etNoteBody.hideKeyboard()
-
                 saveOrUpdateNote(
                     args.noteId,
                     binding.etNoteTitle.text.toString(),
                     binding.etNoteBody.text.toString(),
                     Calendar.getInstance().timeInMillis
                 )
-
                 true
             }
             else -> {
