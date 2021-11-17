@@ -5,6 +5,10 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
 }
 
+def signingFile = rootProject.file("signing.properties")
+def signingProperties = new Properties()
+signingProperties.load(new FileInputStream(signingFile))
+
 android {
     compileSdkVersion 31
     defaultConfig {
@@ -16,6 +20,18 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        release {
+            try {
+                storeFile file(signingProperties['storeFile'])
+                storePassword signingProperties['storePassword']
+                keyAlias "key0"
+                keyPassword signingProperties['keyPassword']
+            } catch (ignored) {
+                throw new InvalidUserDataException("You should define 'storeFile', 'storePassword' and 'keyPassword' in signing.properties.")
+            }
+        }
+    }
     buildFeatures {
         viewBinding true
     }
@@ -23,6 +39,7 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
