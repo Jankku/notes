@@ -74,6 +74,8 @@ class AddNoteFragment : Fragment() {
         binding.etNoteTitle.setText(args.noteTitle, TextView.BufferType.EDITABLE)
         binding.etNoteBody.setText(args.noteBody, TextView.BufferType.EDITABLE)
 
+        binding.etNoteBody.setSelection(binding.etNoteBody.text.length)
+
         binding.etNoteTitle.addTextChangedListener {
             noteEdited = true
         }
@@ -128,8 +130,6 @@ class AddNoteFragment : Fragment() {
     }
 
     private fun setupSaveNoteOnBackPress() {
-        // Save/update note on back press if the note isn't empty
-        // https://developer.android.com/guide/navigation/navigation-custom-back
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             saveOrUpdateNote(
                 args.noteId,

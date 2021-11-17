@@ -12,6 +12,7 @@
         android:theme="@style/Theme.Notes.SplashScreen">
         <activity
             android:name=".ui.MainActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
