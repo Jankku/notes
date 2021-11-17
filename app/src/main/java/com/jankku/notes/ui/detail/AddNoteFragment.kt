@@ -1,4 +1,4 @@
-package com.jankku.notes.ui
+package com.jankku.notes.ui.detail
 
 import android.content.Context
 import android.os.Bundle
@@ -15,7 +15,7 @@ import androidx.preference.PreferenceManager
 import com.jankku.notes.NotesApplication
 import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentAddNoteBinding
-import com.jankku.notes.db.Note
+import com.jankku.notes.db.model.Note
 import com.jankku.notes.util.hideKeyboard
 import com.jankku.notes.util.showKeyboard
 import com.jankku.notes.util.showSnackBar

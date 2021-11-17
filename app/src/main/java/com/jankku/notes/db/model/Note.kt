@@ -1,4 +1,4 @@
-package com.jankku.notes.db
+package com.jankku.notes.db.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

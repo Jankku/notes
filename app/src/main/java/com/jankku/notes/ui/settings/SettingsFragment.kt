@@ -1,4 +1,4 @@
-package com.jankku.notes.ui
+package com.jankku.notes.ui.settings
 
 import android.app.Activity
 import android.content.Context

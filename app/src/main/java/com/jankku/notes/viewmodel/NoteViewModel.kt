@@ -1,8 +1,8 @@
 package com.jankku.notes.viewmodel
 
 import androidx.lifecycle.*
-import com.jankku.notes.db.Note
 import com.jankku.notes.db.NoteDao
+import com.jankku.notes.db.model.Note
 import kotlinx.coroutines.launch
 
 class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {

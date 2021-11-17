@@ -1,4 +1,4 @@
-package com.jankku.notes.ui
+package com.jankku.notes.ui.home
 
 import android.view.MotionEvent
 import androidx.recyclerview.selection.ItemDetailsLookup

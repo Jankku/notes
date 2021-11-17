@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.AddNoteFragment">
+    tools:context=".ui.detail.AddNoteFragment">
 
     <ScrollView
         android:id="@+id/svAddNote"
@@ -28,7 +28,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:context=".ui.AddNoteFragment">
+            tools:context=".ui.detail.AddNoteFragment">
 
             <TextView
                 android:id="@+id/tvCreatedOn"

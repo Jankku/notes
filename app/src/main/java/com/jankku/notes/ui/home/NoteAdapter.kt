@@ -1,4 +1,4 @@
-package com.jankku.notes.ui
+package com.jankku.notes.ui.home
 
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jankku.notes.databinding.NoteItemBinding
-import com.jankku.notes.db.Note
+import com.jankku.notes.db.model.Note
 
 
 class NoteAdapter(
