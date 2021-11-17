@@ -12,7 +12,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.preference.PreferenceManager
 import com.jankku.notes.R
-import com.jankku.notes.ui.home.HomeFragmentDirections
+import com.jankku.notes.util.navigateSafe
 import java.util.*
 
 
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
 
         // Add note shortcut
         if (intent.action == "com.jankku.notes.addNote") {
-            navController.navigate(HomeFragmentDirections.actionHomeFragmentToAddNoteFragment())
+            navController.navigateSafe(R.id.action_homeFragment_to_addNoteFragment)
             intent.action = "android.intent.action.MAIN"
         }
 

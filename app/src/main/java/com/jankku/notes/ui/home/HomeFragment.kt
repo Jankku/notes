@@ -18,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.jankku.notes.NotesApplication
 import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentHomeBinding
+import com.jankku.notes.util.navigateSafe
 import com.jankku.notes.viewmodel.NoteViewModel
 import com.jankku.notes.viewmodel.NoteViewModelFactory
 
@@ -91,15 +92,16 @@ class HomeFragment : Fragment() {
 
     private fun setupRecyclerView() {
         _adapter = NoteAdapter(
-            { note -> // Click listener
-                val action = HomeFragmentDirections.actionHomeFragmentToAddNoteFragment(
-                    noteId = note.id.toString(),
-                    noteTitle = note.title,
-                    noteBody = note.body,
-                    createdOn = note.createdOn.toString(),
-                    editedOn = note.editedOn.toString()
+            { note ->
+                findNavController().navigateSafe(
+                    HomeFragmentDirections.actionHomeFragmentToAddNoteFragment(
+                        noteId = note.id.toString(),
+                        noteTitle = note.title,
+                        noteBody = note.body,
+                        createdOn = note.createdOn.toString(),
+                        editedOn = note.editedOn.toString()
+                    )
                 )
-                findNavController().navigate(action)
             }
         ) { position -> // Swipe listener
             val noteId = noteList[position]
@@ -141,7 +143,7 @@ class HomeFragment : Fragment() {
 
     private fun setupAddFab() {
         binding.fabAdd.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_addNoteFragment)
+            findNavController().navigateSafe(R.id.action_homeFragment_to_addNoteFragment)
         }
 
         // Shrink FAB on scroll
@@ -201,7 +203,7 @@ class HomeFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                findNavController().navigate(R.id.action_homeFragment_to_settingsFragment)
+                findNavController().navigateSafe(R.id.action_homeFragment_to_settingsFragment)
                 true
             }
             else -> super.onOptionsItemSelected(item)
