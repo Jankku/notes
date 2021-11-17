@@ -17,7 +17,7 @@
     <string name="theme_title">Teema</string>
     <string name="theme_description">Järjestelmä, Vaalea, Tumma</string>
     <string name="hide_keyboard_title">Piilota näppäimistö</string>
-    <string name="hide_keyboard_summary">Älä näytä näppäimistöä automaattisesti</string>
+    <string name="hide_keyboard_summary">Älä näytä näppäimistöä muokkausnäytössä</string>
     <string name="export_database_title">Vie</string>
     <string name="import_database_title">Tuo</string>
     <string name="export_database_summary">Muistiinpanot tiedostoon</string>

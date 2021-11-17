@@ -65,7 +65,7 @@
     <!-- Hide keyboard -->
     <string name="hide_keyboard_key" translatable="false">hide_keyboard</string>
     <string name="hide_keyboard_title">Hide keyboard</string>
-    <string name="hide_keyboard_summary">Do not automatically show the keyboard</string>
+    <string name="hide_keyboard_summary">Do not automatically show keyboard on edit screen</string>
 
     <!-- Show save FAB on edit screen -->
     <string name="show_save_fab_key" translatable="false">show_save_fab</string>
