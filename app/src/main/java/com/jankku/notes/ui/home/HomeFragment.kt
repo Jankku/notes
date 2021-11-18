@@ -29,8 +29,9 @@ class HomeFragment : Fragment() {
     private var _adapter: NoteAdapter? = null
     private val adapter get() = _adapter!!
     private var actionMode: ActionMode? = null
+    private var _selectionTracker: SelectionTracker<Long>? = null
+    private val selectionTracker get() = _selectionTracker!!
     private lateinit var application: Context
-    private lateinit var selectionTracker: SelectionTracker<Long>
     private var noteList: MutableList<Long> = mutableListOf()
 
     override fun onAttach(context: Context) {
@@ -68,6 +69,7 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         actionMode?.finish()
         actionMode = null
+        _selectionTracker = null
         _adapter = null
         _binding = null
     }
@@ -160,7 +162,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupSelectionTracker() {
-        selectionTracker = SelectionTracker.Builder(
+        _selectionTracker = SelectionTracker.Builder(
             "itemSelection",
             binding.recyclerview,
             NoteKeyProvider(adapter),
@@ -212,8 +214,7 @@ class HomeFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        // Can be called before onCreateView
-        if (::selectionTracker.isInitialized) {
+        if (_selectionTracker !== null) {
             selectionTracker.onSaveInstanceState(outState)
         }
     }

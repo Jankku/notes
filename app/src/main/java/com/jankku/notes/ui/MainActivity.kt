@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         // Add note shortcut
-        if (intent.action == "com.jankku.notes.addNote") {
+        if (intent.action == "${packageName}.addNote") {
             navController.navigateSafe(R.id.action_homeFragment_to_addNoteFragment)
             intent.action = "android.intent.action.MAIN"
         }
