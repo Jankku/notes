@@ -84,7 +84,10 @@ class HomeFragment : Fragment() {
     private fun setupRecyclerView() {
         _adapter = NoteAdapter { note ->
             findNavController().navigateSafe(
-                HomeFragmentDirections.actionHomeFragmentToAddNoteFragment(note)
+                HomeFragmentDirections.actionHomeFragmentToDetailFragment(
+                    note,
+                    getString(R.string.navigation_edit_note_label)
+                )
             )
         }
 
@@ -108,7 +111,11 @@ class HomeFragment : Fragment() {
 
     private fun setupAddFab() {
         binding.fabAdd.setOnClickListener {
-            findNavController().navigateSafe(R.id.action_homeFragment_to_addNoteFragment)
+            findNavController().navigateSafe(
+                HomeFragmentDirections.actionHomeFragmentToDetailFragment(
+                    title = getString(R.string.navigation_new_note_label)
+                )
+            )
         }
 
         binding.recyclerview.addOnScrollListener(

@@ -28,10 +28,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 
-class AddNoteFragment : Fragment() {
+class DetailFragment : Fragment() {
     private var _binding: FragmentAddNoteBinding? = null
     private val binding get() = _binding!!
-    private val args: AddNoteFragmentArgs by navArgs()
+    private val args: DetailFragmentArgs by navArgs()
     private var application: Context? = null
     private lateinit var prefs: SharedPreferences
 

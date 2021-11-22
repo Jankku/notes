@@ -6,7 +6,8 @@
 
     <!-- General -->
     <string name="navigation_home_label">Notes</string>
-    <string name="navigation_add_note_label">New note</string>
+    <string name="navigation_new_note_label">New note</string>
+    <string name="navigation_edit_note_label">Edit note</string>
     <string name="navigation_settings_label">Settings</string>
 
     <!-- Home fragment -->

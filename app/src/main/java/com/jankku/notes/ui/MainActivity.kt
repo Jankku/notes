@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         // Add note shortcut
         if (intent.action == "${packageName}.addNote") {
-            navController.navigateSafe(R.id.action_homeFragment_to_addNoteFragment)
+            navController.navigateSafe(R.id.action_homeFragment_to_detailFragment)
             intent.action = "android.intent.action.MAIN"
         }
 
