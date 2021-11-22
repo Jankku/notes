@@ -84,13 +84,7 @@ class HomeFragment : Fragment() {
     private fun setupRecyclerView() {
         _adapter = NoteAdapter { note ->
             findNavController().navigateSafe(
-                HomeFragmentDirections.actionHomeFragmentToAddNoteFragment(
-                    noteId = note.id.toString(),
-                    noteTitle = note.title,
-                    noteBody = note.body,
-                    createdOn = note.createdOn.toString(),
-                    editedOn = note.editedOn.toString()
-                )
+                HomeFragmentDirections.actionHomeFragmentToAddNoteFragment(note)
             )
         }
 

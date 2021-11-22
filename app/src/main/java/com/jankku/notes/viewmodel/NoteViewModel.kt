@@ -28,7 +28,7 @@ class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {
     }
 
     fun saveOrUpdateNote(
-        noteId: String,
+        noteId: Long?,
         title: String,
         body: String,
         timeInMs: Long,
@@ -45,8 +45,8 @@ class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {
 
         val newPosition = highestPosition.value!! + 1
         when (noteId) {
-            "-1" -> insert(Note(0, title, body, timeInMs, null, newPosition))
-            else -> update(noteId.toLong(), title, body, timeInMs)
+            null -> insert(Note(0, title, body, timeInMs, null, newPosition))
+            else -> update(noteId, title, body, timeInMs)
         }
 
         sendEvent(Event.NavigateUp(true))

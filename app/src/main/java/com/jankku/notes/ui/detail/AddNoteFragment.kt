@@ -89,14 +89,14 @@ class AddNoteFragment : Fragment() {
         val hideKeyboardPref = prefs.getBoolean(getString(R.string.hide_keyboard_key), false)
 
         binding.etNoteTitle.apply {
-            setText(args.noteTitle, TextView.BufferType.EDITABLE)
+            setText(args.note?.title, TextView.BufferType.EDITABLE)
             addTextChangedListener {
                 viewModel.noteEdited.value = true
             }
         }
 
         binding.etNoteBody.apply {
-            setText(args.noteBody, TextView.BufferType.EDITABLE)
+            setText(args.note?.body, TextView.BufferType.EDITABLE)
             if (!hideKeyboardPref) {
                 setSelection(binding.etNoteBody.text.length)
                 requestFocus()
@@ -109,22 +109,23 @@ class AddNoteFragment : Fragment() {
     }
 
     private fun setupInfoFields() {
-        when (args.createdOn) {
-            "" -> binding.tvCreatedOn.visibility = View.GONE
-            else -> {
+        when (args.note?.createdOn) {
+            is Long -> {
                 val createdDate = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
-                    .format(args.createdOn.toLong())
+                    .format(args.note?.createdOn)
                     .toString()
                 binding.tvCreatedOn.text = getString(R.string.createdOn, createdDate)
+
             }
+            else -> binding.tvCreatedOn.visibility = View.GONE
         }
 
-        when (args.editedOn) {
+        when (args.note?.editedOn.toString()) {
             "" -> binding.tvEditedOn.visibility = View.GONE
             "null" -> binding.tvEditedOn.visibility = View.GONE
             else -> {
                 val editedDate = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
-                    .format(args.editedOn.toLong())
+                    .format(args.note?.editedOn)
                     .toString()
                 binding.tvEditedOn.text = getString(R.string.editedOn, editedDate)
             }
@@ -134,7 +135,7 @@ class AddNoteFragment : Fragment() {
     private fun setupSaveNoteOnBackPress() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             viewModel.saveOrUpdateNote(
-                args.noteId,
+                args.note?.id,
                 binding.etNoteTitle.text.toString(),
                 binding.etNoteBody.text.toString(),
                 System.currentTimeMillis()
@@ -150,7 +151,7 @@ class AddNoteFragment : Fragment() {
                 setOnClickListener {
                     binding.etNoteBody.hideKeyboard()
                     viewModel.saveOrUpdateNote(
-                        args.noteId,
+                        args.note?.id,
                         binding.etNoteTitle.text.toString(),
                         binding.etNoteBody.text.toString(),
                         System.currentTimeMillis()
@@ -161,16 +162,17 @@ class AddNoteFragment : Fragment() {
 
     }
 
-    private fun deleteNote(noteId: String) {
+    private fun deleteNote(noteId: Long?) {
+        if (noteId == null) return
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.delete(noteId.toLong())
+            viewModel.delete(noteId)
         }
         showSnackBar(binding.root, getString(R.string.snackbar_note_deleted))
         viewModel.sendEvent(Event.NavigateUp(true))
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (args.noteId == "-1") return
+        if (args.note?.id == null) return
         inflater.inflate(R.menu.menu_note, menu)
     }
 
@@ -178,12 +180,12 @@ class AddNoteFragment : Fragment() {
         binding.etNoteBody.hideKeyboard()
         return when (item.itemId) {
             R.id.action_delete -> {
-                deleteNote(args.noteId)
+                deleteNote(args.note?.id)
                 true
             }
             android.R.id.home -> {
                 viewModel.saveOrUpdateNote(
-                    args.noteId,
+                    args.note?.id,
                     binding.etNoteTitle.text.toString(),
                     binding.etNoteBody.text.toString(),
                     System.currentTimeMillis()
