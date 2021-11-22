@@ -3,6 +3,8 @@ package com.jankku.notes.ui.home
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -14,16 +16,15 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.jankku.notes.NotesApplication
 import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentHomeBinding
 import com.jankku.notes.util.navigateSafe
+import com.jankku.notes.util.showSnackBar
 import com.jankku.notes.viewmodel.NoteViewModel
 import com.jankku.notes.viewmodel.NoteViewModelFactory
 
 class HomeFragment : Fragment() {
-
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var _adapter: NoteAdapter? = null
@@ -32,14 +33,13 @@ class HomeFragment : Fragment() {
     private var _selectionTracker: SelectionTracker<Long>? = null
     private val selectionTracker get() = _selectionTracker!!
     private lateinit var application: Context
-    private var noteList: MutableList<Long> = mutableListOf()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         application = requireActivity().applicationContext
     }
 
-    private val noteViewModel: NoteViewModel by viewModels {
+    private val viewModel: NoteViewModel by viewModels {
         NoteViewModelFactory((application as NotesApplication).noteDao)
     }
 
@@ -75,50 +75,23 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        noteViewModel.allNotes.observe(viewLifecycleOwner) { list ->
-            list.let {
-                adapter.submitList(it)
-                noteList.clear()
-                for (note in it) {
-                    noteList.add(note.id)
-                }
-            }
-            // Show the "No Notes" layout if the list is empty, otherwise keep it hidden
-            if (list.isEmpty()) {
-                binding.noNotes.clNoNotes.visibility = View.VISIBLE
-            } else {
-                binding.noNotes.clNoNotes.visibility = View.GONE
-            }
+        viewModel.allNotes.observe(viewLifecycleOwner) { list ->
+            adapter.differ.submitList(list)
+            binding.noNotes.clNoNotes.visibility = if (list.isEmpty()) VISIBLE else GONE
         }
     }
 
     private fun setupRecyclerView() {
-        _adapter = NoteAdapter(
-            { note ->
-                findNavController().navigateSafe(
-                    HomeFragmentDirections.actionHomeFragmentToAddNoteFragment(
-                        noteId = note.id.toString(),
-                        noteTitle = note.title,
-                        noteBody = note.body,
-                        createdOn = note.createdOn.toString(),
-                        editedOn = note.editedOn.toString()
-                    )
+        _adapter = NoteAdapter { note ->
+            findNavController().navigateSafe(
+                HomeFragmentDirections.actionHomeFragmentToAddNoteFragment(
+                    noteId = note.id.toString(),
+                    noteTitle = note.title,
+                    noteBody = note.body,
+                    createdOn = note.createdOn.toString(),
+                    editedOn = note.editedOn.toString()
                 )
-            }
-        ) { position -> // Swipe listener
-            val noteId = noteList[position]
-
-            Snackbar.make(
-                binding.root,
-                R.string.snackbar_note_deleted,
-                Snackbar.LENGTH_LONG
-            ).show()
-
-            noteList.removeAt(position)
-            adapter.notifyItemMoved(position + 1, position)
-            adapter.notifyItemRemoved(position)
-            adapter.notifyItemRangeChanged(0, noteList.size)
-            noteViewModel.delete(noteId)
+            )
         }
 
         val viewModePreference = PreferenceManager
@@ -134,12 +107,8 @@ class HomeFragment : Fragment() {
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         }
 
-        binding.recyclerview.setHasFixedSize(true)
+        ItemTouchHelper(ItemTouchHelperCallback()).attachToRecyclerView(binding.recyclerview)
         binding.recyclerview.adapter = adapter
-
-        // Swipe to delete action
-        val itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter, requireContext()))
-        itemTouchHelper.attachToRecyclerView(binding.recyclerview)
     }
 
 
@@ -148,8 +117,6 @@ class HomeFragment : Fragment() {
             findNavController().navigateSafe(R.id.action_homeFragment_to_addNoteFragment)
         }
 
-        // Shrink FAB on scroll
-        // https://stackoverflow.com/questions/32038332/using-google-design-library-how-to-hide-fab-button-on-scroll-down
         binding.recyclerview.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -190,11 +157,14 @@ class HomeFragment : Fragment() {
             actionModeCallback.startActionMode(
                 requireActivity(),
                 selectionTracker,
-                noteViewModel,
+                viewModel,
                 adapter,
-                noteList,
                 selectionTracker.selection.size().toString()
-            )
+            ) { deleteCount -> // On delete callback
+                val message = if (deleteCount == 1) getString(R.string.snackbar_note_deleted)
+                else getString(R.string.snackbar_notes_deleted, deleteCount)
+                showSnackBar(binding.root, message)
+            }
         }
     }
 

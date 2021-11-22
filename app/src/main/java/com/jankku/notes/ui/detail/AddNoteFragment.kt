@@ -1,6 +1,7 @@
 package com.jankku.notes.ui.detail
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
@@ -8,6 +9,8 @@ import androidx.activity.addCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -15,30 +18,30 @@ import androidx.preference.PreferenceManager
 import com.jankku.notes.NotesApplication
 import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentAddNoteBinding
-import com.jankku.notes.db.model.Note
+import com.jankku.notes.util.Event
 import com.jankku.notes.util.hideKeyboard
 import com.jankku.notes.util.showKeyboard
 import com.jankku.notes.util.showSnackBar
 import com.jankku.notes.viewmodel.NoteViewModel
 import com.jankku.notes.viewmodel.NoteViewModelFactory
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.text.DateFormat
-import java.util.*
 
 class AddNoteFragment : Fragment() {
-
     private var _binding: FragmentAddNoteBinding? = null
     private val binding get() = _binding!!
     private val args: AddNoteFragmentArgs by navArgs()
     private var application: Context? = null
-    private var noteEdited: Boolean = false
+    private lateinit var prefs: SharedPreferences
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         application = activity?.applicationContext
+        prefs = PreferenceManager.getDefaultSharedPreferences(application)
     }
 
-    private val noteViewModel: NoteViewModel by viewModels {
+    private val viewModel: NoteViewModel by viewModels {
         NoteViewModelFactory((application as NotesApplication).noteDao)
     }
 
@@ -58,7 +61,7 @@ class AddNoteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        preferences()
+        setupEventListener()
         setupTextFields()
         setupInfoFields()
         setupSaveNoteOnBackPress()
@@ -70,39 +73,38 @@ class AddNoteFragment : Fragment() {
         _binding = null
     }
 
-    private fun setupTextFields() {
-        binding.etNoteTitle.setText(args.noteTitle, TextView.BufferType.EDITABLE)
-        binding.etNoteBody.setText(args.noteBody, TextView.BufferType.EDITABLE)
-
-        binding.etNoteBody.setSelection(binding.etNoteBody.text.length)
-
-        binding.etNoteTitle.addTextChangedListener {
-            noteEdited = true
-        }
-
-        binding.etNoteBody.addTextChangedListener {
-            noteEdited = true
+    private fun setupEventListener() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.eventChannel
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .collect { event ->
+                    when (event) {
+                        is Event.NavigateUp -> findNavController().navigateUp()
+                    }
+                }
         }
     }
 
-    private fun preferences() {
-        val keyboardPref = PreferenceManager
-            .getDefaultSharedPreferences(application)
-            .getBoolean(getString(R.string.hide_keyboard_key), false)
+    private fun setupTextFields() {
+        val hideKeyboardPref = prefs.getBoolean(getString(R.string.hide_keyboard_key), false)
 
-        // Show keyboard if hide keyboard setting is false
-        if (!keyboardPref) {
-            binding.etNoteBody.showKeyboard()
-            binding.etNoteBody.setSelection(binding.etNoteBody.length())
+        binding.etNoteTitle.apply {
+            setText(args.noteTitle, TextView.BufferType.EDITABLE)
+            addTextChangedListener {
+                viewModel.noteEdited.value = true
+            }
         }
 
-        val saveFabPref = PreferenceManager
-            .getDefaultSharedPreferences(application)
-            .getBoolean(getString(R.string.show_save_fab_key), false)
-
-        // Show save FAB if the preference is true
-        if (saveFabPref) {
-            binding.fabSave.visibility = View.VISIBLE
+        binding.etNoteBody.apply {
+            setText(args.noteBody, TextView.BufferType.EDITABLE)
+            if (!hideKeyboardPref) {
+                setSelection(binding.etNoteBody.text.length)
+                requestFocus()
+                showKeyboard()
+            }
+            addTextChangedListener {
+                viewModel.noteEdited.value = true
+            }
         }
     }
 
@@ -131,92 +133,64 @@ class AddNoteFragment : Fragment() {
 
     private fun setupSaveNoteOnBackPress() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            saveOrUpdateNote(
+            viewModel.saveOrUpdateNote(
                 args.noteId,
                 binding.etNoteTitle.text.toString(),
                 binding.etNoteBody.text.toString(),
-                Calendar.getInstance().timeInMillis
+                System.currentTimeMillis()
             )
         }
     }
 
     private fun setupSaveFab() {
-        binding.fabSave.setOnClickListener {
-            binding.etNoteBody.hideKeyboard()
-            saveOrUpdateNote(
-                args.noteId,
-                binding.etNoteTitle.text.toString(),
-                binding.etNoteBody.text.toString(),
-                Calendar.getInstance().timeInMillis
-            )
-        }
-    }
-
-    private fun saveOrUpdateNote(
-        noteId: String,
-        title: String,
-        body: String,
-        timeInMs: Long
-    ) {
-        if (title.isEmpty() && body.isEmpty()) {
-            findNavController().navigateUp()
-            return
-        }
-
-        if (!noteEdited) {
-            findNavController().navigateUp()
-            return
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            val id = noteId.toLong()
-            when (noteId) {
-                "-1" -> noteViewModel.insert(Note(0, title, body, timeInMs, null))
-                else -> noteViewModel.update(id, title, body, timeInMs)
+        val showSaveFabPref = prefs.getBoolean(getString(R.string.show_save_fab_key), false)
+        if (showSaveFabPref) {
+            binding.fabSave.apply {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    binding.etNoteBody.hideKeyboard()
+                    viewModel.saveOrUpdateNote(
+                        args.noteId,
+                        binding.etNoteTitle.text.toString(),
+                        binding.etNoteBody.text.toString(),
+                        System.currentTimeMillis()
+                    )
+                }
             }
         }
 
-        findNavController().navigateUp()
     }
 
     private fun deleteNote(noteId: String) {
         viewLifecycleOwner.lifecycleScope.launch {
-            noteViewModel.delete(noteId.toLong())
+            viewModel.delete(noteId.toLong())
         }
-
-        findNavController().navigateUp()
         showSnackBar(binding.root, getString(R.string.snackbar_note_deleted))
+        viewModel.sendEvent(Event.NavigateUp(true))
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        // If note exists, inflate menu
-        if (args.noteId != "-1") {
-            inflater.inflate(R.menu.menu_note, menu)
-        }
+        if (args.noteId == "-1") return
+        inflater.inflate(R.menu.menu_note, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        binding.etNoteBody.hideKeyboard()
         return when (item.itemId) {
             R.id.action_delete -> {
-                binding.etNoteBody.hideKeyboard()
                 deleteNote(args.noteId)
                 true
             }
             android.R.id.home -> {
-                binding.etNoteBody.hideKeyboard()
-                saveOrUpdateNote(
+                viewModel.saveOrUpdateNote(
                     args.noteId,
                     binding.etNoteTitle.text.toString(),
                     binding.etNoteBody.text.toString(),
-                    Calendar.getInstance().timeInMillis
+                    System.currentTimeMillis()
                 )
                 true
             }
-            else -> {
-                binding.etNoteBody.hideKeyboard()
-                super.onOptionsItemSelected(item)
-            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

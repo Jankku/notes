@@ -1,22 +1,19 @@
 package com.jankku.notes.ui.home
 
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jankku.notes.databinding.NoteItemBinding
 import com.jankku.notes.db.model.Note
 
-
 class NoteAdapter(
     private val clickListener: (Note) -> Unit,
-    private val swipeListener: (Int) -> Unit
-) : ListAdapter<Note, NoteAdapter.NoteViewHolder>(DiffUtil) {
+) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
     lateinit var selectionTracker: SelectionTracker<Long>
 
     init {
@@ -29,15 +26,38 @@ class NoteAdapter(
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(differ.currentList[position])
     }
+
+    override fun getItemCount(): Int = differ.currentList.size
 
     override fun getItemId(position: Int): Long = position.toLong()
+
     override fun getItemViewType(position: Int): Int = position
 
-    fun deleteItem(itemPosition: Int) {
-        swipeListener(itemPosition)
+    fun moveItem(fromPosition: Int, toPosition: Int) {
+        val list = differ.currentList.toMutableList()
+        val fromItem = list[fromPosition]
+        list.removeAt(fromPosition)
+        if (toPosition < fromPosition) {
+            list.add(toPosition + 1, fromItem)
+        } else {
+            list.add(toPosition - 1, fromItem)
+        }
+        differ.submitList(list)
     }
+
+    private val diffCallback = object : DiffUtil.ItemCallback<Note>() {
+        override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, diffCallback)
 
     inner class NoteViewHolder(private val binding: NoteItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -49,10 +69,14 @@ class NoteAdapter(
             binding.tvNoteTitle.text = note.title
             binding.tvNoteBody.text = note.getTruncatedBody()
             noteId = note.id
-            itemView.setOnClickListener { clickListener(note) }
+
+            itemView.setOnClickListener {
+                clickListener(note)
+            }
+
             bindSelectedState(
                 this,
-                selectionTracker.isSelected(getItem(absoluteAdapterPosition).id)
+                selectionTracker.isSelected(differ.currentList[absoluteAdapterPosition].id)
             )
         }
 
@@ -63,21 +87,8 @@ class NoteAdapter(
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
             object : ItemDetailsLookup.ItemDetails<Long>() {
                 override fun getPosition(): Int = absoluteAdapterPosition
-                override fun getSelectionKey(): Long = getItem(absoluteAdapterPosition).id
-                override fun inSelectionHotspot(e: MotionEvent): Boolean = false
-                override fun inDragRegion(e: MotionEvent): Boolean = true
+                override fun getSelectionKey(): Long =
+                    differ.currentList[absoluteAdapterPosition].id
             }
-    }
-
-    companion object {
-        private val DiffUtil = object : DiffUtil.ItemCallback<Note>() {
-            override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-            override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
-                return oldItem == newItem
-            }
-        }
     }
 }

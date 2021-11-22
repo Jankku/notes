@@ -6,13 +6,14 @@
 
     <!-- General -->
     <string name="navigation_home_label">Notes</string>
-    <string name="navigation_add_note_label">Note</string>
+    <string name="navigation_add_note_label">New note</string>
     <string name="navigation_settings_label">Settings</string>
 
     <!-- Home fragment -->
     <string name="no_notes">No notes</string>
     <string name="fab_add_title">Create</string>
     <string name="snackbar_note_deleted">Note deleted</string>
+    <string name="snackbar_notes_deleted">%1$d notes deleted</string>
 
     <!-- App bar -->
     <string name="menu_note_delete">Delete</string>

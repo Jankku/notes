@@ -1,9 +1,9 @@
 package com.jankku.notes.ui
 
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.LocaleList
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -18,13 +18,12 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val themePref = PreferenceManager
-            .getDefaultSharedPreferences(applicationContext)
-            .getString(getString(R.string.theme_key), null)
+        prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
 
-        // Set theme
+        val themePref = prefs.getString(getString(R.string.theme_key), null)
         when (themePref) {
             getString(R.string.theme_value_light) -> setDefaultNightMode(MODE_NIGHT_NO)
             getString(R.string.theme_value_dark) -> setDefaultNightMode(MODE_NIGHT_YES)
@@ -37,11 +36,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Set language
-        val languagePref = PreferenceManager
-            .getDefaultSharedPreferences(applicationContext)
-            .getString(getString(R.string.language_key), getString(R.string.language_value_system))
-        Log.d("LOG_LANG_PREF", languagePref.toString())
+        val languagePref = prefs.getString(
+            getString(R.string.language_key),
+            getString(R.string.language_value_system)
+        )
         when (languagePref) {
             getString(R.string.language_value_en) -> updateLanguage(getString(R.string.language_value_en))
             getString(R.string.language_value_fi) -> updateLanguage(getString(R.string.language_value_fi))
@@ -63,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupActionBarWithNavController(navController)
-        supportActionBar!!.elevation = 0f
+        supportActionBar?.elevation = 0f
     }
 
     override fun onSupportNavigateUp(): Boolean {

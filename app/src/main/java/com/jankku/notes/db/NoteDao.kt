@@ -1,16 +1,19 @@
 package com.jankku.notes.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.jankku.notes.db.model.Note
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
-    @Query("SELECT * FROM notes")
-    fun getAll(): Flow<List<Note>>
+    @Query("SELECT * FROM notes ORDER BY position")
+    fun getNotesByPosition(): LiveData<List<Note>>
+
+    @Query("SELECT coalesce(max(position), 0) FROM notes")
+    fun getHighestPosition(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(note: Note)
