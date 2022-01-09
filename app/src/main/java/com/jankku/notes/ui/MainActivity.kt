@@ -9,14 +9,16 @@ import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.preference.PreferenceManager
 import com.jankku.notes.R
+import com.jankku.notes.databinding.ActivityMainBinding
 import com.jankku.notes.util.navigateSafe
 import java.util.*
 
-
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var prefs: SharedPreferences
 
@@ -48,7 +50,8 @@ class MainActivity : AppCompatActivity() {
 
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -60,12 +63,17 @@ class MainActivity : AppCompatActivity() {
             intent.action = "android.intent.action.MAIN"
         }
 
-        setupActionBarWithNavController(navController)
-        supportActionBar?.elevation = 0f
+        setSupportActionBar(binding.toolbar)
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    fun setCustomTitle(title: String) {
+        supportActionBar?.title = title
     }
 
     // https://stackoverflow.com/questions/38997356/change-language-programmatically-android-n-7-0-api-24

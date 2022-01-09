@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.jankku.notes.NotesApplication
 import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentHomeBinding
+import com.jankku.notes.ui.MainActivity
 import com.jankku.notes.util.navigateSafe
 import com.jankku.notes.util.showSnackBar
 import com.jankku.notes.viewmodel.NoteViewModel
@@ -76,6 +77,15 @@ class HomeFragment : Fragment() {
         viewModel.allNotes.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
             binding.noNotes.clNoNotes.isVisible = list.isEmpty()
+        }
+
+        viewModel.noteCount.observe(viewLifecycleOwner) { count ->
+            (requireActivity() as? MainActivity)?.setCustomTitle(
+                getString(
+                    R.string.navigation_home_label,
+                    count
+                )
+            )
         }
     }
 
@@ -147,8 +157,18 @@ class HomeFragment : Fragment() {
     }
 
     private fun actionModeSelection(selectedItems: Int) {
-        val actionModeCallback = ActionModeCallback()
         val title = selectionTracker.selection.size().toString()
+        val actionModeCallback = ActionModeCallback(
+            title,
+            selectionTracker,
+            viewModel,
+            adapter,
+            onDeleteCallback = { deleteCount ->
+                val message =
+                    if (deleteCount == 1) getString(R.string.snackbar_note_deleted)
+                    else getString(R.string.snackbar_notes_deleted, deleteCount)
+                showSnackBar(binding.root, message)
+            })
 
         when {
             selectedItems == 0 -> {
@@ -156,20 +176,8 @@ class HomeFragment : Fragment() {
                 actionMode = null
             }
             actionMode == null -> {
-                actionMode = actionModeCallback.startActionMode(
-                    requireActivity(),
-                    selectionTracker,
-                    viewModel,
-                    adapter,
-                    title,
-                    onDeleteCallback = { deleteCount ->
-                        val message =
-                            if (deleteCount == 1) getString(R.string.snackbar_note_deleted)
-                            else getString(R.string.snackbar_notes_deleted, deleteCount)
-                        showSnackBar(binding.root, message)
-                    })
+                actionMode = actionModeCallback.startActionMode(requireActivity())
             }
-            else -> actionMode?.title = title
         }
     }
 

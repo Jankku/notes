@@ -5,7 +5,7 @@
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
     </style>
 
-    <style name="Base.Theme.Notes" parent="Theme.MaterialComponents.DayNight">
+    <style name="Base.Theme.Notes" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:statusBarColor">?attr/colorSurface</item>
         <item name="android:navigationBarColor">?attr/colorSurface</item>
         <item name="android:colorBackground">?attr/colorSurface</item>
@@ -14,14 +14,15 @@
         <item name="textAppearanceHeadline6">@style/Notes.TextAppearance.Headline6</item>
         <item name="textAppearanceBody1">@style/Notes.TextAppearance.Body1</item>
         <item name="textAppearanceBody2">@style/Notes.TextAppearance.Body2</item>
+
+        <item name="appBarLayoutStyle">@style/Widget.Notes.AppBarOverlay</item>
+        <item name="toolbarStyle">@style/Widget.Notes.ToolBar</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="Theme.Notes" parent="Base.Theme.Notes">
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
-
-        <item name="appBarLayoutStyle">@style/Widget.Notes.AppBarOverlay</item>
-        <item name="toolbarStyle">@style/Widget.Notes.ToolBar</item>
 
         <item name="colorPrimary">@color/green_500</item>
         <item name="colorPrimaryVariant">@color/green_500</item>

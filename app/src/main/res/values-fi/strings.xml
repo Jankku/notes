@@ -28,7 +28,7 @@
     <string name="add_note">Lisää muistiinpano</string>
     <string name="view_mode_title">Näkymä</string>
     <string name="snackbar_note_deleted">Muistiinpano poistettu</string>
-    <string name="navigation_home_label">Muistiinpanot</string>
+    <string name="navigation_home_label">Muistiinpanot (%1$d)</string>
     <string name="navigation_settings_label">Asetukset</string>
     <string name="view_mode_entry_list">Lista</string>
     <string name="view_mode_entry_grid">Ruudukko</string>

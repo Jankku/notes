@@ -11,10 +11,13 @@
         <item name="android:scrollbars">none</item>
     </style>
 
-    <style name="Widget.Notes.AppBarOverlay" parent="Widget.MaterialComponents.AppBarLayout.Surface" />
+    <style name="Widget.Notes.AppBarOverlay" parent="Widget.MaterialComponents.AppBarLayout.Surface">
+        <item name="android:elevation">0dp</item>
+        <item name="elevation">0dp</item>
+    </style>
 
     <style name="Widget.Notes.ToolBar" parent="Widget.MaterialComponents.Toolbar.Surface">
-        <item name="titleTextAppearance">@style/Notes.TextAppearance.Headline6</item>
+        <item name="titleTextAppearance">@style/Notes.TextAppearance.ToolbarTitle</item>
     </style>
 
 </resources>

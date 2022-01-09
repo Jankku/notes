@@ -13,11 +13,12 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class NoteViewModel(private val dao: NoteDao) : ViewModel() {
-    val allNotes = dao.getNotes()
-    val noteEdited = MutableLiveData(false)
-
     private val _eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventChannel = _eventChannel.receiveAsFlow()
+
+    val allNotes = dao.getNotes()
+    val noteCount = dao.getNoteCount()
+    val noteEdited = MutableLiveData(false)
 
     fun insertOrUpdate(
         noteId: Long?,
@@ -26,10 +27,10 @@ class NoteViewModel(private val dao: NoteDao) : ViewModel() {
         timeInMs: Long,
     ) {
         if (title.isEmpty() && body.isEmpty()) {
-            sendEvent(Event.NavigateUp(true))
+            sendEvent(Event.NavigateUp)
             return
         } else if (noteEdited.value == false) {
-            sendEvent(Event.NavigateUp(true))
+            sendEvent(Event.NavigateUp)
             return
         }
 
@@ -38,7 +39,7 @@ class NoteViewModel(private val dao: NoteDao) : ViewModel() {
             else -> update(noteId, title, body, timeInMs)
         }
 
-        sendEvent(Event.NavigateUp(true))
+        sendEvent(Event.NavigateUp)
     }
 
     private fun insert(note: Note) = viewModelScope.launch(Dispatchers.IO) { dao.insert(note) }

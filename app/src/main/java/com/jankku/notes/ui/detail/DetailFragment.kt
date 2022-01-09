@@ -168,7 +168,7 @@ class DetailFragment : Fragment() {
             viewModel.delete(noteId)
         }
         showSnackBar(binding.root, getString(R.string.snackbar_note_deleted))
-        viewModel.sendEvent(Event.NavigateUp(true))
+        viewModel.sendEvent(Event.NavigateUp)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
