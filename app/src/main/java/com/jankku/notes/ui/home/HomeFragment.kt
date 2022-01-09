@@ -12,12 +12,12 @@ import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.jankku.notes.NotesApplication
 import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentHomeBinding
 import com.jankku.notes.ui.MainActivity
+import com.jankku.notes.util.ShrinkFabOnScroll
 import com.jankku.notes.util.navigateSafe
 import com.jankku.notes.util.showSnackBar
 import com.jankku.notes.viewmodel.NoteViewModel
@@ -125,15 +125,7 @@ class HomeFragment : Fragment() {
             )
         }
 
-        binding.recyclerview.addOnScrollListener(
-            object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dy > 10)
-                        binding.fabAdd.shrink()
-                    else if (dy < 0)
-                        binding.fabAdd.extend()
-                }
-            })
+        binding.recyclerview.addOnScrollListener(ShrinkFabOnScroll(binding.fabAdd))
     }
 
     private fun setupSelectionTracker() {
