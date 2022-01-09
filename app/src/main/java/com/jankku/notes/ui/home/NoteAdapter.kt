@@ -5,15 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
-import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jankku.notes.databinding.NoteItemBinding
 import com.jankku.notes.db.model.Note
 
 class NoteAdapter(
     private val clickListener: (Note) -> Unit,
-) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
+) : ListAdapter<Note, NoteAdapter.NoteViewHolder>(diffCallback) {
     lateinit var selectionTracker: SelectionTracker<Long>
 
     init {
@@ -21,47 +21,34 @@ class NoteAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        val binding = NoteItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = NoteItemBinding.inflate(inflater, parent, false)
         return NoteViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        holder.bind(differ.currentList[position])
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int = differ.currentList.size
+    override fun getItemId(position: Int): Long = getItem(position).id
 
-    override fun getItemId(position: Int): Long = position.toLong()
+    override fun getItemViewType(position: Int): Int = getItem(position).hashCode()
 
-    override fun getItemViewType(position: Int): Int = position
+    companion object {
+        private val diffCallback = object : DiffUtil.ItemCallback<Note>() {
+            override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
+                return oldItem.id == newItem.id
+            }
 
-    fun moveItem(fromPosition: Int, toPosition: Int) {
-        val list = differ.currentList.toMutableList()
-        val fromItem = list[fromPosition]
-        list.removeAt(fromPosition)
-        if (toPosition < fromPosition) {
-            list.add(toPosition + 1, fromItem)
-        } else {
-            list.add(toPosition - 1, fromItem)
-        }
-        differ.submitList(list)
-    }
-
-    private val diffCallback = object : DiffUtil.ItemCallback<Note>() {
-        override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
-            return oldItem == newItem
+            override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
+                return oldItem == newItem
+            }
         }
     }
-
-    val differ = AsyncListDiffer(this, diffCallback)
 
     inner class NoteViewHolder(private val binding: NoteItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private var noteId: Long? = null
+        var noteId: Long? = null
 
         fun bind(
             note: Note,
@@ -74,21 +61,17 @@ class NoteAdapter(
                 clickListener(note)
             }
 
-            bindSelectedState(
-                this,
-                selectionTracker.isSelected(differ.currentList[absoluteAdapterPosition].id)
-            )
+            setViewState(this, selectionTracker.isSelected(currentList[absoluteAdapterPosition].id))
         }
 
-        private fun bindSelectedState(view: View, selected: Boolean) {
+        private fun setViewState(view: View, selected: Boolean) {
             view.isActivated = selected
         }
 
         fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
             object : ItemDetailsLookup.ItemDetails<Long>() {
                 override fun getPosition(): Int = absoluteAdapterPosition
-                override fun getSelectionKey(): Long =
-                    differ.currentList[absoluteAdapterPosition].id
+                override fun getSelectionKey(): Long = currentList[absoluteAdapterPosition].id
             }
     }
 }

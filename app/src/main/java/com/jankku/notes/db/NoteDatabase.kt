@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.jankku.notes.db.model.Note
 
-@Database(entities = [Note::class], version = 3, exportSchema = true)
+@Database(entities = [Note::class], version = 2, exportSchema = true)
 abstract class NoteDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
 
@@ -20,15 +20,12 @@ abstract class NoteDatabase : RoomDatabase() {
         fun getDatabase(
             context: Context
         ): NoteDatabase {
-            // if the INSTANCE is not null, then return it,
-            // if it is, then create the database
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     NoteDatabase::class.java,
                     DATABASE_NAME
-                ).fallbackToDestructiveMigration()
-                    .build()
+                ).build()
                 INSTANCE = instance
                 // return instance
                 instance

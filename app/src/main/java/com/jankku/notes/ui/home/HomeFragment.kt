@@ -3,8 +3,7 @@ package com.jankku.notes.ui.home
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -12,7 +11,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -76,8 +74,8 @@ class HomeFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.allNotes.observe(viewLifecycleOwner) { list ->
-            adapter.differ.submitList(list)
-            binding.noNotes.clNoNotes.visibility = if (list.isEmpty()) VISIBLE else GONE
+            adapter.submitList(list)
+            binding.noNotes.clNoNotes.isVisible = list.isEmpty()
         }
     }
 
@@ -91,11 +89,11 @@ class HomeFragment : Fragment() {
             )
         }
 
-        val viewModePreference = PreferenceManager
+        val selectedViewMode = PreferenceManager
             .getDefaultSharedPreferences(application)
             .getString(getString(R.string.view_mode_key), null)
 
-        if (viewModePreference == "list") {
+        if (selectedViewMode == "list") {
             binding.recyclerview.layoutManager = object : LinearLayoutManager(application) {
                 override fun supportsPredictiveItemAnimations(): Boolean = false
             }
@@ -104,7 +102,6 @@ class HomeFragment : Fragment() {
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         }
 
-        ItemTouchHelper(ItemTouchHelperCallback()).attachToRecyclerView(binding.recyclerview)
         binding.recyclerview.adapter = adapter
     }
 
@@ -151,21 +148,28 @@ class HomeFragment : Fragment() {
 
     private fun actionModeSelection(selectedItems: Int) {
         val actionModeCallback = ActionModeCallback()
-        actionMode = if (selectedItems == 0) {
-            actionMode?.finish()
-            null
-        } else {
-            actionModeCallback.startActionMode(
-                requireActivity(),
-                selectionTracker,
-                viewModel,
-                adapter,
-                selectionTracker.selection.size().toString()
-            ) { deleteCount -> // On delete callback
-                val message = if (deleteCount == 1) getString(R.string.snackbar_note_deleted)
-                else getString(R.string.snackbar_notes_deleted, deleteCount)
-                showSnackBar(binding.root, message)
+        val title = selectionTracker.selection.size().toString()
+
+        when {
+            selectedItems == 0 -> {
+                actionMode?.finish()
+                actionMode = null
             }
+            actionMode == null -> {
+                actionMode = actionModeCallback.startActionMode(
+                    requireActivity(),
+                    selectionTracker,
+                    viewModel,
+                    adapter,
+                    title,
+                    onDeleteCallback = { deleteCount ->
+                        val message =
+                            if (deleteCount == 1) getString(R.string.snackbar_note_deleted)
+                            else getString(R.string.snackbar_notes_deleted, deleteCount)
+                        showSnackBar(binding.root, message)
+                    })
+            }
+            else -> actionMode?.title = title
         }
     }
 

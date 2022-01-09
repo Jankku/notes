@@ -134,7 +134,7 @@ class DetailFragment : Fragment() {
 
     private fun setupSaveNoteOnBackPress() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            viewModel.saveOrUpdateNote(
+            viewModel.insertOrUpdate(
                 args.note?.id,
                 binding.etNoteTitle.text.toString(),
                 binding.etNoteBody.text.toString(),
@@ -150,7 +150,7 @@ class DetailFragment : Fragment() {
                 visibility = View.VISIBLE
                 setOnClickListener {
                     binding.etNoteBody.hideKeyboard()
-                    viewModel.saveOrUpdateNote(
+                    viewModel.insertOrUpdate(
                         args.note?.id,
                         binding.etNoteTitle.text.toString(),
                         binding.etNoteBody.text.toString(),
@@ -184,7 +184,7 @@ class DetailFragment : Fragment() {
                 true
             }
             android.R.id.home -> {
-                viewModel.saveOrUpdateNote(
+                viewModel.insertOrUpdate(
                     args.note?.id,
                     binding.etNoteTitle.text.toString(),
                     binding.etNoteBody.text.toString(),

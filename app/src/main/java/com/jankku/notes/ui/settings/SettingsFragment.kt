@@ -13,8 +13,6 @@ import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.jankku.notes.BuildConfig
 import com.jankku.notes.R
-import com.jankku.notes.util.Constants.EXPORT_REQ_CODE
-import com.jankku.notes.util.Constants.IMPORT_REQ_CODE
 import com.jankku.notes.util.DatabaseHelper
 import com.jankku.notes.util.showSnackBar
 import kotlinx.coroutines.launch
@@ -177,5 +175,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 BaseTransientBottomBar.LENGTH_INDEFINITE
             )
         }
+    }
+
+    companion object {
+        private const val EXPORT_REQ_CODE = 1
+        private const val IMPORT_REQ_CODE = 2
     }
 }

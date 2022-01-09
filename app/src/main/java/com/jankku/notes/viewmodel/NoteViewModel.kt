@@ -12,22 +12,14 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {
-    private val highestPosition = MutableLiveData(0)
-
-    val allNotes = noteDao.getNotesByPosition()
+class NoteViewModel(private val dao: NoteDao) : ViewModel() {
+    val allNotes = dao.getNotes()
     val noteEdited = MutableLiveData(false)
 
     private val _eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventChannel = _eventChannel.receiveAsFlow()
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            highestPosition.postValue(noteDao.getHighestPosition())
-        }
-    }
-
-    fun saveOrUpdateNote(
+    fun insertOrUpdate(
         noteId: Long?,
         title: String,
         body: String,
@@ -36,28 +28,25 @@ class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {
         if (title.isEmpty() && body.isEmpty()) {
             sendEvent(Event.NavigateUp(true))
             return
-        }
-
-        if (noteEdited.value == false) {
+        } else if (noteEdited.value == false) {
             sendEvent(Event.NavigateUp(true))
             return
         }
 
-        val newPosition = highestPosition.value!! + 1
         when (noteId) {
-            null -> insert(Note(0, title, body, timeInMs, null, newPosition))
+            null -> insert(Note(0, title, body, timeInMs, null))
             else -> update(noteId, title, body, timeInMs)
         }
 
         sendEvent(Event.NavigateUp(true))
     }
 
-    private fun insert(note: Note) = viewModelScope.launch(Dispatchers.IO) { noteDao.insert(note) }
+    private fun insert(note: Note) = viewModelScope.launch(Dispatchers.IO) { dao.insert(note) }
 
     private fun update(id: Long, title: String, body: String, editedOn: Long) =
-        viewModelScope.launch(Dispatchers.IO) { noteDao.update(id, title, body, editedOn) }
+        viewModelScope.launch(Dispatchers.IO) { dao.update(id, title, body, editedOn) }
 
-    fun delete(noteId: Long) = viewModelScope.launch(Dispatchers.IO) { noteDao.delete(noteId) }
+    fun delete(noteId: Long) = viewModelScope.launch(Dispatchers.IO) { dao.delete(noteId) }
 
     fun sendEvent(event: Event) = viewModelScope.launch {
         _eventChannel.trySend(event)

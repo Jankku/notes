@@ -23,11 +23,14 @@ class ActionModeCallback : ActionMode.Callback {
         return true
     }
 
-    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean = false
+    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+        this.mode?.title = title
+        return true
+    }
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
         val selectedNoteIds = this.selectionTracker?.selection?.toList()
-        val noteIdList = adapter?.differ?.currentList?.map { it.id }?.asIterable()
+        val noteIdList = adapter?.currentList?.toList()?.map { it.id }?.asIterable()
 
         when (item?.itemId) {
             R.id.action_select_all -> {
@@ -37,9 +40,6 @@ class ActionModeCallback : ActionMode.Callback {
                 if (selectedNoteIds == null) return false
                 for (id in selectedNoteIds) {
                     viewModel?.delete(id)
-                    val position = adapter?.differ?.currentList?.first { it.id == id }?.position
-                    if (position != null) adapter?.notifyItemRemoved(position)
-                    onDeleteCallback(selectedNoteIds.size)
                 }
                 this.mode?.finish()
             }
@@ -51,6 +51,7 @@ class ActionModeCallback : ActionMode.Callback {
 
     override fun onDestroyActionMode(mode: ActionMode?) {
         this.mode = null
+        selectionTracker?.clearSelection()
     }
 
     fun startActionMode(

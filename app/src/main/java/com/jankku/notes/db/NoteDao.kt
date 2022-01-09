@@ -9,11 +9,8 @@ import com.jankku.notes.db.model.Note
 
 @Dao
 interface NoteDao {
-    @Query("SELECT * FROM notes ORDER BY position")
-    fun getNotesByPosition(): LiveData<List<Note>>
-
-    @Query("SELECT coalesce(max(position), 0) FROM notes")
-    fun getHighestPosition(): Int
+    @Query("SELECT * FROM notes")
+    fun getNotes(): LiveData<List<Note>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(note: Note)
