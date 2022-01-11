@@ -17,6 +17,7 @@ import com.jankku.notes.NotesApplication
 import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentHomeBinding
 import com.jankku.notes.ui.MainActivity
+import com.jankku.notes.ui.common.SpaceItemDecoration
 import com.jankku.notes.util.ShrinkFabOnScroll
 import com.jankku.notes.util.navigateSafe
 import com.jankku.notes.util.showSnackBar
@@ -103,13 +104,10 @@ class HomeFragment : Fragment() {
             .getDefaultSharedPreferences(application)
             .getString(getString(R.string.view_mode_key), null)
 
-        if (selectedViewMode == "list") {
-            binding.recyclerview.layoutManager = object : LinearLayoutManager(application) {
-                override fun supportsPredictiveItemAnimations(): Boolean = false
-            }
-        } else {
-            binding.recyclerview.layoutManager =
-                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        when (selectedViewMode) {
+            getString(R.string.view_mode_value_list) -> listView()
+            getString(R.string.view_mode_value_grid) -> gridView()
+            else -> listView()
         }
 
         binding.recyclerview.adapter = adapter
@@ -170,6 +168,33 @@ class HomeFragment : Fragment() {
             actionMode == null -> {
                 actionMode = actionModeCallback.startActionMode(requireActivity())
             }
+        }
+    }
+
+    private fun listView() {
+        binding.recyclerview.apply {
+            layoutManager = object : LinearLayoutManager(requireContext()) {
+                override fun supportsPredictiveItemAnimations(): Boolean = false
+            }
+            addItemDecoration(
+                SpaceItemDecoration(
+                    resources.getDimension(R.dimen.spacing_default).toInt()
+                )
+            )
+        }
+    }
+
+    private fun gridView() {
+        binding.recyclerview.apply {
+            layoutManager = StaggeredGridLayoutManager(
+                resources.getInteger(R.integer.rv_grid_columns),
+                StaggeredGridLayoutManager.VERTICAL
+            )
+            addItemDecoration(
+                SpaceItemDecoration(
+                    resources.getDimension(R.dimen.spacing_default).toInt()
+                )
+            )
         }
     }
 
