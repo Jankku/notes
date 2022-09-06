@@ -76,6 +76,7 @@
                 android:layout_height="match_parent"
                 android:background="?attr/colorSurface"
                 android:hint="@string/noteBody"
+                android:autoLink="all"
                 android:importantForAutofill="no"
                 android:inputType="textMultiLine|textCapSentences|textAutoComplete"
                 android:paddingHorizontal="@dimen/spacing_default"
