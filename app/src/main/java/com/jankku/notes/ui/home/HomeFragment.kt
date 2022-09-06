@@ -94,8 +94,8 @@ class HomeFragment : Fragment() {
         _adapter = NoteAdapter { note ->
             findNavController().navigateSafe(
                 HomeFragmentDirections.actionHomeFragmentToDetailFragment(
-                    note,
-                    getString(R.string.navigation_edit_note_label)
+                    getString(R.string.navigation_edit_note_label),
+                    note
                 )
             )
         }

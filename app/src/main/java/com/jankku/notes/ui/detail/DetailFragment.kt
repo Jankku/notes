@@ -24,7 +24,6 @@ import com.jankku.notes.util.showKeyboard
 import com.jankku.notes.util.showSnackBar
 import com.jankku.notes.viewmodel.NoteViewModel
 import com.jankku.notes.viewmodel.NoteViewModelFactory
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 
@@ -38,7 +37,7 @@ class DetailFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         application = activity?.applicationContext
-        prefs = PreferenceManager.getDefaultSharedPreferences(application)
+        prefs = PreferenceManager.getDefaultSharedPreferences(application!!)
     }
 
     private val viewModel: NoteViewModel by viewModels {
