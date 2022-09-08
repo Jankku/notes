@@ -14,7 +14,7 @@ android {
     compileSdkVersion 32
     defaultConfig {
         applicationId "com.jankku.notes"
-        minSdk 21
+        minSdk 23
         targetSdk 32
         versionCode 7
         versionName "1.0.5"
