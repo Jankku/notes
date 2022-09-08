@@ -18,7 +18,11 @@ android {
         targetSdk 32
         versionCode 7
         versionName "1.0.5"
-
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
