@@ -137,7 +137,8 @@ class DetailFragment : Fragment() {
                 args.note?.id,
                 binding.etNoteTitle.text.toString(),
                 binding.etNoteBody.text.toString(),
-                System.currentTimeMillis()
+                System.currentTimeMillis(),
+                args.note?.pinned ?: false
             )
         }
     }
@@ -153,7 +154,8 @@ class DetailFragment : Fragment() {
                         args.note?.id,
                         binding.etNoteTitle.text.toString(),
                         binding.etNoteBody.text.toString(),
-                        System.currentTimeMillis()
+                        System.currentTimeMillis(),
+                        args.note?.pinned ?: false
                     )
                 }
             }
@@ -187,7 +189,8 @@ class DetailFragment : Fragment() {
                     args.note?.id,
                     binding.etNoteTitle.text.toString(),
                     binding.etNoteBody.text.toString(),
-                    System.currentTimeMillis()
+                    System.currentTimeMillis(),
+                    args.note?.pinned ?: false
                 )
                 true
             }

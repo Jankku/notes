@@ -9,11 +9,11 @@ import com.jankku.notes.R
 import com.jankku.notes.viewmodel.NoteViewModel
 
 class ActionModeCallback(
-    val title: String,
+    private val title: String,
     private val selectionTracker: SelectionTracker<Long>,
     private val viewModel: NoteViewModel,
     private val adapter: NoteAdapter,
-    val onDeleteCallback: (Int) -> Unit
+    private val onDeleteCallback: (Int) -> Unit
 ) : ActionMode.Callback {
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu?): Boolean {
@@ -27,19 +27,28 @@ class ActionModeCallback(
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
         val selectedNoteIds = this.selectionTracker.selection.toList()
         val noteIdList = adapter.currentList.toList().map { it.id }.asIterable()
+        val pinnedList = selectedNoteIds.filter { selectedId ->
+            adapter.currentList.toList().find { note -> note.id == selectedId }!!.pinned
+        }
+
+        if (selectedNoteIds.isEmpty()) return false
 
         when (item?.itemId) {
+            R.id.action_pin -> {
+                for (id in selectedNoteIds) {
+                    val isPinned = pinnedList.contains(id)
+                    viewModel.pin(id, !isPinned)
+                }
+                mode?.finish()
+            }
             R.id.action_select_all -> {
                 selectionTracker.setItemsSelected(noteIdList, true)
             }
             R.id.action_delete -> {
-                if (selectedNoteIds.isEmpty()) return false
-
                 for (id in selectedNoteIds) {
                     viewModel.delete(id)
                 }
                 onDeleteCallback(selectedNoteIds.size)
-
                 mode?.finish()
             }
             else -> mode?.finish()

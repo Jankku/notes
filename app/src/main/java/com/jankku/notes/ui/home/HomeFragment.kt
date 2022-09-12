@@ -18,7 +18,6 @@ import com.jankku.notes.R
 import com.jankku.notes.databinding.FragmentHomeBinding
 import com.jankku.notes.ui.MainActivity
 import com.jankku.notes.ui.common.SpaceItemDecoration
-import com.jankku.notes.util.ShrinkFabOnScroll
 import com.jankku.notes.util.navigateSafe
 import com.jankku.notes.util.showSnackBar
 import com.jankku.notes.viewmodel.NoteViewModel
@@ -27,11 +26,18 @@ import com.jankku.notes.viewmodel.NoteViewModelFactory
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private var _adapter: NoteAdapter? = null
-    private val adapter get() = _adapter!!
+
+    private var _pinnedAdapter: NoteAdapter? = null
+    private val pinnedAdapter get() = _pinnedAdapter!!
+    private var _pinnedSelectionTracker: SelectionTracker<Long>? = null
+    private val pinnedSelectionTracker get() = _pinnedSelectionTracker!!
+
+    private var _unpinnedAdapter: NoteAdapter? = null
+    private val unpinnedAdapter get() = _unpinnedAdapter!!
+    private var _unpinnedSelectionTracker: SelectionTracker<Long>? = null
+    private val unpinnedSelectionTracker get() = _unpinnedSelectionTracker!!
+
     private var actionMode: ActionMode? = null
-    private var _selectionTracker: SelectionTracker<Long>? = null
-    private val selectionTracker get() = _selectionTracker!!
     private lateinit var application: Context
 
     override fun onAttach(context: Context) {
@@ -60,8 +66,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        setupObservers()
         setupSelectionTracker()
+        setupObservers()
         setupAddFab()
     }
 
@@ -69,18 +75,32 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         actionMode?.finish()
         actionMode = null
-        _selectionTracker = null
-        _adapter = null
+        _unpinnedSelectionTracker = null
+        _pinnedSelectionTracker = null
+        _pinnedAdapter = null
+        _unpinnedAdapter = null
         _binding = null
     }
 
     private fun setupObservers() {
-        viewModel.allNotes.observe(viewLifecycleOwner) { list ->
-            adapter.submitList(list)
-            binding.noNotes.clNoNotes.isVisible = list.isEmpty()
+        viewModel.pinnedNotes.observe(viewLifecycleOwner) { pinnedNotes ->
+            pinnedAdapter.submitList(pinnedNotes)
+            binding.rvPinnedNotes.isVisible = pinnedNotes.isNotEmpty()
+            binding.tvPinnedTitle.isVisible = pinnedNotes.isNotEmpty()
+        }
+
+        viewModel.unpinnedNotes.observe(viewLifecycleOwner) { unpinnedNotes ->
+            unpinnedAdapter.submitList(unpinnedNotes)
+            binding.rvUnpinnedNotes.isVisible = unpinnedNotes.isNotEmpty()
+
+            viewModel.pinnedNotes.observe(viewLifecycleOwner) { pinnedNotes ->
+                binding.tvUnpinnedTitle.isVisible =
+                    unpinnedNotes.isNotEmpty() && pinnedNotes.isNotEmpty()
+            }
         }
 
         viewModel.noteCount.observe(viewLifecycleOwner) { count ->
+            binding.noNotes.clNoNotes.isVisible = count == 0
             (requireActivity() as? MainActivity)?.setCustomTitle(
                 getString(
                     R.string.navigation_home_label,
@@ -91,7 +111,15 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        _adapter = NoteAdapter { note ->
+        _pinnedAdapter = NoteAdapter { note ->
+            findNavController().navigateSafe(
+                HomeFragmentDirections.actionHomeFragmentToDetailFragment(
+                    getString(R.string.navigation_edit_note_label),
+                    note
+                )
+            )
+        }
+        _unpinnedAdapter = NoteAdapter { note ->
             findNavController().navigateSafe(
                 HomeFragmentDirections.actionHomeFragmentToDetailFragment(
                     getString(R.string.navigation_edit_note_label),
@@ -103,14 +131,14 @@ class HomeFragment : Fragment() {
         val selectedViewMode = PreferenceManager
             .getDefaultSharedPreferences(application)
             .getString(getString(R.string.view_mode_key), null)
-
         when (selectedViewMode) {
             getString(R.string.view_mode_value_list) -> listView()
             getString(R.string.view_mode_value_grid) -> gridView()
             else -> listView()
         }
 
-        binding.recyclerview.adapter = adapter
+        binding.rvPinnedNotes.adapter = pinnedAdapter
+        binding.rvUnpinnedNotes.adapter = unpinnedAdapter
     }
 
 
@@ -123,56 +151,102 @@ class HomeFragment : Fragment() {
             )
         }
 
-        binding.recyclerview.addOnScrollListener(ShrinkFabOnScroll(binding.fabAdd))
-    }
-
-    private fun setupSelectionTracker() {
-        _selectionTracker = SelectionTracker.Builder(
-            "itemSelection",
-            binding.recyclerview,
-            NoteKeyProvider(adapter),
-            NoteDetailsLookup(binding.recyclerview),
-            StorageStrategy.createLongStorage()
-        ).withSelectionPredicate(SelectionPredicates.createSelectAnything()).build()
-
-        adapter.selectionTracker = selectionTracker
-
-        selectionTracker.addObserver(
-            object : SelectionTracker.SelectionObserver<Long>() {
-                override fun onItemStateChanged(key: Long, selected: Boolean) {
-                    val selectedItems = selectionTracker.selection.size()
-                    actionModeSelection(selectedItems)
-                }
-            })
-    }
-
-    private fun actionModeSelection(selectedItems: Int) {
-        val title = selectionTracker.selection.size().toString()
-        val actionModeCallback = ActionModeCallback(
-            title,
-            selectionTracker,
-            viewModel,
-            adapter,
-            onDeleteCallback = { deleteCount ->
-                val message =
-                    if (deleteCount == 1) getString(R.string.snackbar_note_deleted)
-                    else getString(R.string.snackbar_notes_deleted, deleteCount)
-                showSnackBar(binding.root, message)
-            })
-
-        when {
-            selectedItems == 0 -> {
-                actionMode?.finish()
-                actionMode = null
-            }
-            actionMode == null -> {
-                actionMode = actionModeCallback.startActionMode(requireActivity())
+        binding.nsvNotes.setOnScrollChangeListener { _, _, newY, _, oldY ->
+            if (newY > oldY) {
+                binding.fabAdd.shrink()
+            } else {
+                binding.fabAdd.extend()
             }
         }
     }
 
+    private fun setupSelectionTracker() {
+        _pinnedSelectionTracker = SelectionTracker.Builder(
+            "pinnedSelection",
+            binding.rvPinnedNotes,
+            NoteKeyProvider(pinnedAdapter),
+            NoteDetailsLookup(binding.rvPinnedNotes),
+            StorageStrategy.createLongStorage()
+        ).withSelectionPredicate(SelectionPredicates.createSelectAnything()).build()
+
+        _unpinnedSelectionTracker = SelectionTracker.Builder(
+            "unpinnedSelection",
+            binding.rvUnpinnedNotes,
+            NoteKeyProvider(unpinnedAdapter),
+            NoteDetailsLookup(binding.rvUnpinnedNotes),
+            StorageStrategy.createLongStorage()
+        ).withSelectionPredicate(SelectionPredicates.createSelectAnything()).build()
+
+        pinnedAdapter.selectionTracker = pinnedSelectionTracker
+        unpinnedAdapter.selectionTracker = unpinnedSelectionTracker
+
+        pinnedSelectionTracker.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
+            override fun onItemStateChanged(key: Long, selected: Boolean) {
+                val selectionSize = pinnedSelectionTracker.selection.size()
+                val actionModeCallback = ActionModeCallback(
+                    selectionSize.toString(),
+                    pinnedSelectionTracker,
+                    viewModel,
+                    pinnedAdapter,
+                    onDeleteCallback = { deleteCount ->
+                        val message =
+                            if (deleteCount == 1) getString(R.string.snackbar_note_deleted)
+                            else getString(R.string.snackbar_notes_deleted, deleteCount)
+                        showSnackBar(binding.root, message)
+                    })
+
+                when {
+                    selectionSize == 0 -> {
+                        actionMode?.finish()
+                        actionMode = null
+                    }
+                    actionMode == null -> {
+                        actionMode = actionModeCallback.startActionMode(requireActivity())
+                    }
+                }
+            }
+        })
+
+        unpinnedSelectionTracker.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
+            override fun onItemStateChanged(key: Long, selected: Boolean) {
+                val selectionSize = unpinnedSelectionTracker.selection.size()
+                val actionModeCallback = ActionModeCallback(
+                    selectionSize.toString(),
+                    unpinnedSelectionTracker,
+                    viewModel,
+                    unpinnedAdapter,
+                    onDeleteCallback = { deleteCount ->
+                        val message =
+                            if (deleteCount == 1) getString(R.string.snackbar_note_deleted)
+                            else getString(R.string.snackbar_notes_deleted, deleteCount)
+                        showSnackBar(binding.root, message)
+                    })
+
+                when {
+                    selectionSize == 0 -> {
+                        actionMode?.finish()
+                        actionMode = null
+                    }
+                    actionMode == null -> {
+                        actionMode = actionModeCallback.startActionMode(requireActivity())
+                    }
+                }
+            }
+        })
+    }
+
     private fun listView() {
-        binding.recyclerview.apply {
+        binding.rvPinnedNotes.apply {
+            layoutManager = object : LinearLayoutManager(requireContext()) {
+                override fun supportsPredictiveItemAnimations(): Boolean = false
+            }
+            addItemDecoration(
+                SpaceItemDecoration(
+                    resources.getDimension(R.dimen.spacing_default).toInt()
+                )
+            )
+        }
+        binding.rvUnpinnedNotes.apply {
             layoutManager = object : LinearLayoutManager(requireContext()) {
                 override fun supportsPredictiveItemAnimations(): Boolean = false
             }
@@ -185,7 +259,18 @@ class HomeFragment : Fragment() {
     }
 
     private fun gridView() {
-        binding.recyclerview.apply {
+        binding.rvPinnedNotes.apply {
+            layoutManager = StaggeredGridLayoutManager(
+                resources.getInteger(R.integer.rv_grid_columns),
+                StaggeredGridLayoutManager.VERTICAL
+            )
+            addItemDecoration(
+                SpaceItemDecoration(
+                    resources.getDimension(R.dimen.spacing_default).toInt()
+                )
+            )
+        }
+        binding.rvUnpinnedNotes.apply {
             layoutManager = StaggeredGridLayoutManager(
                 resources.getInteger(R.integer.rv_grid_columns),
                 StaggeredGridLayoutManager.VERTICAL
@@ -214,8 +299,11 @@ class HomeFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if (_selectionTracker !== null) {
-            selectionTracker.onSaveInstanceState(outState)
+        if (_unpinnedSelectionTracker !== null) {
+            unpinnedSelectionTracker.onSaveInstanceState(outState)
+        }
+        if (_pinnedSelectionTracker !== null) {
+            pinnedSelectionTracker.onSaveInstanceState(outState)
         }
     }
 }

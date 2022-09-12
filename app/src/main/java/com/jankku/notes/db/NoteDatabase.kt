@@ -1,12 +1,17 @@
 package com.jankku.notes.db
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.jankku.notes.db.model.Note
 
-@Database(entities = [Note::class], version = 2, exportSchema = true)
+@Database(
+    entities = [Note::class], version = 3, autoMigrations = [
+        AutoMigration(from = 2, to = 3)
+    ]
+)
 abstract class NoteDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
 

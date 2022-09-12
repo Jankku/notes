@@ -45,4 +45,7 @@
     <string name="snackbar_notes_deleted">%1$d muistiinpanoa poistettu</string>
     <string name="navigation_new_note_label">Uusi muistiinpano</string>
     <string name="navigation_edit_note_label">Muokkaa muistiinpanoa</string>
+    <string name="menu_selection_pin">Kiinnitä muistiinpano</string>
+    <string name="rv_pinned_title">Kiinnitetyt</string>
+    <string name="rv_unpinned_title">Muut</string>
 </resources>
