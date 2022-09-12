@@ -10,10 +10,9 @@ Simple notes Android app in Kotlin.
 - Open source
 - Light/dark theme
 - Export/import notes
+- Pin favorite notes
 - No permissions
-- No ads
-- No trackers
-- No bullshit
+- No ads/trackers
 
 ## Tech stack
 
