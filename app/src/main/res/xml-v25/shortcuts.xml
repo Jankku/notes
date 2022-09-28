@@ -9,7 +9,7 @@
         android:shortcutShortLabel="@string/add_note">
 
         <intent
-            android:action="com.jankku.notes.addNote"
+            android:action="com.jankku.notes.ADD"
             android:targetClass="com.jankku.notes.ui.MainActivity"
             android:targetPackage="com.jankku.notes" />
 

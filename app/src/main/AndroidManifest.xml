@@ -15,6 +15,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="com.jankku.notes.ADD" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

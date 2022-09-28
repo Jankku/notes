@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.preference.PreferenceManager
 import com.jankku.notes.R
 import com.jankku.notes.databinding.ActivityMainBinding
+import com.jankku.notes.ui.home.HomeFragmentDirections
 import com.jankku.notes.util.navigateSafe
 import java.util.*
 
@@ -58,9 +59,12 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         // Add note shortcut
-        if (intent.action == "${packageName}.addNote") {
-            navController.navigateSafe(R.id.action_homeFragment_to_detailFragment)
-            intent.action = "android.intent.action.MAIN"
+        if (intent.action == "com.jankku.notes.ADD") {
+            navController.navigateSafe(
+                HomeFragmentDirections.actionHomeFragmentToDetailFragment(
+                    title = getString(R.string.navigation_new_note_label)
+                )
+            )
         }
 
         setSupportActionBar(binding.toolbar)
