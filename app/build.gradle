@@ -16,8 +16,8 @@ android {
         applicationId "com.jankku.notes"
         minSdk 23
         targetSdk 32
-        versionCode 7
-        versionName "1.0.5"
+        versionCode 8
+        versionName "1.0.6"
         kapt {
             arguments {
                 arg("room.schemaLocation", "$projectDir/schemas")
@@ -30,7 +30,7 @@ android {
             try {
                 storeFile file(signingProperties['storeFile'])
                 storePassword signingProperties['storePassword']
-                keyAlias "key0"
+                keyAlias signingProperties['storeKey']
                 keyPassword signingProperties['keyPassword']
             } catch (ignored) {
                 throw new InvalidUserDataException("You should define 'storeFile', 'storePassword' and 'keyPassword' in signing.properties.")
