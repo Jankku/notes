@@ -21,7 +21,7 @@ import com.jankku.notes.databinding.FragmentAddNoteBinding
 import com.jankku.notes.util.Event
 import com.jankku.notes.util.hideKeyboard
 import com.jankku.notes.util.showKeyboard
-import com.jankku.notes.util.showSnackBar
+import com.jankku.notes.util.showToast
 import com.jankku.notes.viewmodel.NoteViewModel
 import com.jankku.notes.viewmodel.NoteViewModelFactory
 import kotlinx.coroutines.launch
@@ -168,7 +168,7 @@ class DetailFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.delete(noteId)
         }
-        showSnackBar(binding.root, getString(R.string.snackbar_note_deleted))
+        requireContext().showToast(getString(R.string.snackbar_note_deleted))
         viewModel.sendEvent(Event.NavigateUp)
     }
 

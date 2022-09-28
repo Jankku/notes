@@ -19,7 +19,7 @@ import com.jankku.notes.databinding.FragmentHomeBinding
 import com.jankku.notes.ui.MainActivity
 import com.jankku.notes.ui.common.SpaceItemDecoration
 import com.jankku.notes.util.navigateSafe
-import com.jankku.notes.util.showSnackBar
+import com.jankku.notes.util.showToast
 import com.jankku.notes.viewmodel.NoteViewModel
 import com.jankku.notes.viewmodel.NoteViewModelFactory
 
@@ -192,7 +192,7 @@ class HomeFragment : Fragment() {
                         val message =
                             if (deleteCount == 1) getString(R.string.snackbar_note_deleted)
                             else getString(R.string.snackbar_notes_deleted, deleteCount)
-                        showSnackBar(binding.root, message)
+                        requireContext().showToast(message)
                     })
 
                 when {
@@ -219,7 +219,7 @@ class HomeFragment : Fragment() {
                         val message =
                             if (deleteCount == 1) getString(R.string.snackbar_note_deleted)
                             else getString(R.string.snackbar_notes_deleted, deleteCount)
-                        showSnackBar(binding.root, message)
+                        requireContext().showToast(message)
                     })
 
                 when {
