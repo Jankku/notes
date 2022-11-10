@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 class NoteViewModel(private val dao: NoteDao) : ViewModel() {
     private val _eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventChannel = _eventChannel.receiveAsFlow()
-    val pinnedNotes = dao.getNotes(true)
-    val unpinnedNotes = dao.getNotes(false)
-    val noteCount = dao.getNoteCount()
+    val pinnedNotes = dao.getByStatus(true)
+    val unpinnedNotes = dao.getByStatus(false)
+    val noteCount = dao.getCount()
     val noteEdited = MutableLiveData(false)
 
     fun pin(noteId: Long, pinned: Boolean) =

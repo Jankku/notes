@@ -6,10 +6,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.jankku.notes.db.model.Note
+import com.jankku.notes.db.model.NoteFts
 
 @Database(
-    entities = [Note::class], version = 3, autoMigrations = [
-        AutoMigration(from = 2, to = 3)
+    entities = [Note::class, NoteFts::class], version = 4, autoMigrations = [
+        AutoMigration(from = 2, to = 3),
+        AutoMigration(from = 3, to = 4)
     ]
 )
 abstract class NoteDatabase : RoomDatabase() {

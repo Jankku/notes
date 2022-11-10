@@ -48,4 +48,7 @@
     <string name="menu_selection_pin">Kiinnitä muistiinpano</string>
     <string name="rv_pinned_title">Kiinnitetyt</string>
     <string name="rv_unpinned_title">Muut</string>
+    <string name="navigation_search_label">Hae muistiinpanoja</string>
+    <string name="menu_main_search">Haku</string>
+    <string name="search_hint">Hae muistiinpanoja</string>
 </resources>

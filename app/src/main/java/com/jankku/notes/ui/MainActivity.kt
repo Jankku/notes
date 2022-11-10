@@ -4,8 +4,10 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.LocaleList
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.*
+import androidx.appcompat.widget.SearchView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var prefs: SharedPreferences
+    lateinit var searchField: SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
@@ -52,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        searchField = binding.viewSearch.searchView
         setContentView(binding.root)
 
         val navHostFragment = supportFragmentManager
@@ -78,6 +82,17 @@ class MainActivity : AppCompatActivity() {
 
     fun setCustomTitle(title: String) {
         supportActionBar?.title = title
+    }
+
+    fun showSearchField() {
+        binding.viewSearch.searchView.visibility = View.VISIBLE
+    }
+
+    fun hideSearchField() {
+        binding.viewSearch.searchView.apply {
+            visibility = View.GONE
+        }
+
     }
 
     // https://stackoverflow.com/questions/38997356/change-language-programmatically-android-n-7-0-api-24

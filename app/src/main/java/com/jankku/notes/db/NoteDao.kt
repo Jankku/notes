@@ -9,11 +9,14 @@ import com.jankku.notes.db.model.Note
 
 @Dao
 interface NoteDao {
-    @Query("SELECT * FROM notes WHERE pinned=:pinned")
-    fun getNotes(pinned: Boolean): LiveData<List<Note>>
+    @Query("SELECT * FROM notes")
+    fun getAll(): LiveData<List<Note>>
 
-    @Query("SELECT count(id) FROM notes")
-    fun getNoteCount(): LiveData<Int>
+    @Query("SELECT * FROM notes WHERE pinned=:pinned")
+    fun getByStatus(pinned: Boolean): LiveData<List<Note>>
+
+    @Query("SELECT count(*) FROM notes")
+    fun getCount(): LiveData<Int>
 
     @Query("UPDATE notes SET pinned=:pinned WHERE id=:id")
     fun pin(id: Long, pinned: Boolean)
@@ -26,4 +29,14 @@ interface NoteDao {
 
     @Query("DELETE from notes WHERE id=:id")
     suspend fun delete(id: Long)
+
+    @Query(
+        """
+        SELECT *
+        FROM notes JOIN notes_fts
+            ON notes.id == notes_fts.rowid
+        WHERE notes_fts MATCH :query
+        """
+    )
+    fun search(query: String): List<Note>
 }

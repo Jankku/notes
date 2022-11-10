@@ -293,6 +293,10 @@ class HomeFragment : Fragment() {
                 findNavController().navigateSafe(R.id.action_homeFragment_to_settingsFragment)
                 true
             }
+            R.id.action_search -> {
+                findNavController().navigateSafe(R.id.action_homeFragment_to_searchFragment)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
