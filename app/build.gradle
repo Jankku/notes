@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'org.jetbrains.kotlin.android'
 }
 
 def signingFile = rootProject.file("signing.properties")
@@ -11,11 +12,12 @@ def signingProperties = new Properties()
 signingProperties.load(new FileInputStream(signingFile))
 
 android {
-    compileSdkVersion 32
+    namespace 'com.jankku.notes'
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.jankku.notes"
         minSdk 23
-        targetSdk 32
+        targetSdk 33
         versionCode 9
         versionName "1.0.7"
         kapt {
@@ -55,10 +57,10 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.5.0'
-    implementation 'androidx.activity:activity-ktx:1.5.1'
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.activity:activity-ktx:1.6.1'
+    implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
