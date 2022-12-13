@@ -18,8 +18,8 @@ android {
         applicationId "com.jankku.notes"
         minSdk 23
         targetSdk 33
-        versionCode 9
-        versionName "1.0.7"
+        versionCode 10
+        versionName "1.0.8"
         kapt {
             arguments {
                 arg("room.schemaLocation", "$projectDir/schemas")
