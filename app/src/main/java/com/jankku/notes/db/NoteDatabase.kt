@@ -5,11 +5,12 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import com.jankku.notes.db.model.Note
 import com.jankku.notes.db.model.NoteFts
 
 @Database(
-    entities = [Note::class, NoteFts::class], version = 4, autoMigrations = [
+    entities = [Note::class, NoteFts::class], version = 5, autoMigrations = [
         AutoMigration(from = 2, to = 3),
         AutoMigration(from = 3, to = 4)
     ]
@@ -32,7 +33,9 @@ abstract class NoteDatabase : RoomDatabase() {
                     context.applicationContext,
                     NoteDatabase::class.java,
                     DATABASE_NAME
-                ).build()
+                ).addMigrations(Migration(4, 5) {
+                    it.execSQL("INSERT INTO notes_fts(notes_fts) VALUES ('rebuild')")
+                }).build()
                 INSTANCE = instance
                 // return instance
                 instance
